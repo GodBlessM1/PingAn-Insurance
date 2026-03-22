@@ -300,6 +300,10 @@
                     <i class="fas fa-database w-6"></i>
                     <span>数据明细</span>
                 </div>
+                <div class="nav-item" onclick="showPage('insurance')">
+                    <i class="fas fa-book w-6"></i>
+                    <span>保险介绍</span>
+                </div>
             </nav>
             
             <div class="p-4 border-t border-white/5">
@@ -815,6 +819,208 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- 保险介绍页面 -->
+            <div id="insurance" class="page-section">
+                <div class="space-y-6">
+                    <!-- 平安福 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
+                                福
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安福</h3>
+                                <span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">传统寿险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安福是一款综合保障型保险产品，提供全面的健康保障和身故保障。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>重大疾病保障：覆盖多种重大疾病，如癌症、心脏病、脑中风等，确诊后按合同约定赔付保额</li>
+                                <li>轻症疾病保障：对部分轻症疾病提供额外赔付，减轻早期治疗的经济压力</li>
+                                <li>身故保障：在被保险人身故时，向受益人支付保险金，确保家庭经济安全</li>
+                                <li>意外伤害保障：针对意外事故导致的伤残或身故，提供相应的赔偿</li>
+                                <li>豁免保费：在确诊某些特定疾病后，后续保费可豁免，保障继续有效</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合注重全面保障、希望获得健康和身故双重保障的家庭经济支柱。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>保障全面，涵盖重疾、中症、轻症以及身故保障；储蓄型重疾险，兼具保障和储蓄功能。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安金裕人生 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white font-bold text-lg">
+                                金
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安金裕人生</h3>
+                                <span class="inline-block px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm">分红险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安金裕人生两全保险（分红型）是一款两全保险产品，既提供保障又有机会获得分红。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>生存金：60岁以前每两年领取基本保额的10%，60岁以后每年领取基本保额的6%，终身领取</li>
+                                <li>身故金：身故后返还所有已交保费</li>
+                                <li>分红：根据公司经营情况获得年度分红，分红不确定</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合希望获得稳定现金流、同时享受分红收益的客户。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>短期交费（3年或5年），高额快速返还，终身享受分红，保费可返还，满足灵活理财需求。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安智胜人生 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center text-white font-bold text-lg">
+                                智
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安智胜人生</h3>
+                                <span class="inline-block px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">万能险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安智胜人生终身寿险（万能型）是一款结合了终身寿险保障和投资功能的保险产品。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>身故保障：提供终身身故保障，保障金额为保单价值的105%和基本保险金额的较大者</li>
+                                <li>重大疾病保障：可附加重疾保障，覆盖多种重大疾病</li>
+                                <li>意外保障：最高31万元一般意外人身保障金</li>
+                                <li>投资账户：保费扣除费用后进入投资账户，享受投资收益</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合希望获得灵活保障和投资增值机会的客户。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>交费灵活，保额可调，保单账户价值领取方便，兼具保障和理财功能，年化收益率可达6%。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安世纪理财 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
+                                世
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安世纪理财</h3>
+                                <span class="inline-block px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-sm">投连险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安世纪理财投资连结保险是一种兼具保险保障和投资理财双重功能的新型保险产品。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>身故保障：提供基本的身故保障功能</li>
+                                <li>投资理财：保费进入投资账户，根据投资账户单位价格确定收益</li>
+                                <li>风险保障：具有一定的投资风险，收益与投资账户表现挂钩</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合有一定风险承受能力、希望获得较高投资收益的客户。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>具有较强的投资功能，同时提供风险保障，收益潜力较大。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安颐享年金 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg">
+                                颐
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安颐享年金</h3>
+                                <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm">年金险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安颐享天年养老年金保险（分红型）将固定保障与灵活增值相结合，覆盖养老、身故、满期等多重需求。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>养老年金：自约定的领取年龄开始，每年可领取100%基本保额，最高可领至106周岁</li>
+                                <li>身故保障：提供身故保障，确保家庭经济安全</li>
+                                <li>满期金：保障期满时给付满期保险金</li>
+                                <li>分红：根据公司经营情况获得年度分红</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合有养老规划需求、希望获得稳定养老金收入的中老年群体。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>保障期限长（可保至106岁），活多久领多久，终身领取，稳健收益，为养老规划提供安心保障。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安御享金瑞 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
+                                御
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安御享金瑞</h3>
+                                <span class="inline-block px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-sm">分红险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安人寿御享金瑞是一款分红型年金保险产品，结合了保障和理财功能。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>年金领取：投保后，按照合同约定的时间开始领取年金</li>
+                                <li>身故保障：提供身故保障，身故后返还保费或现金价值</li>
+                                <li>分红：根据公司经营情况获得年度分红</li>
+                                <li>万能账户：可搭配聚财宝万能险，实现二次增值</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合希望实现财富积累、养老规划和传承的客户。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>"财富、养老、传承"三者兼顾，最短仅需3年投入，搭配聚财宝万能险实现稳健增值。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安智悦人生 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center text-white font-bold text-lg">
+                                悦
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安智悦人生</h3>
+                                <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm">万能险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安智悦人生是中国平安推出的一款终身寿险产品，属于万能型保险。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>终身寿险保障：提供终身身故保障</li>
+                                <li>万能账户：允许投保人将部分保费投入万能账户，享受投资收益</li>
+                                <li>附加保障：可附加定期寿险、重疾险和意外险</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合希望获得灵活保障和投资机会，能够根据不同人生阶段调整保险计划的客户。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>兼具保障与投资双重功能，透明度高，灵活性强，保障期限30年-终身，投保年龄18-60周岁。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安聚财宝 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center text-white font-bold text-lg">
+                                聚
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安聚财宝</h3>
+                                <span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 rounded-full text-sm">万能险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>聚财宝是平安保险公司推出的一款万能型保险产品，既可以作为附加险存在，也可以单独购买。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>投资账户：保费进入万能账户进行投资，享受投资收益</li>
+                                <li>身故保障：提供基本的身故保障</li>
+                                <li>灵活领取：支持部分领取和保单贷款</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合希望获得稳健投资收益、同时需要一定保障的客户。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>结合保险保障和投资功能，取钱操作灵活，历史结算利率较高（有67个月达5%），费用结构透明。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
     
@@ -843,7 +1049,8 @@
                 'comparison': '产品对比',
                 'heatmap': '热力图分析',
                 'ml': 'AI预测',
-                'data': '数据明细'
+                'data': '数据明细',
+                'insurance': '保险介绍'
             };
             document.getElementById('page-title').textContent = titles[pageId];
             
