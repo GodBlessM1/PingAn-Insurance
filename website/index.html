@@ -302,9 +302,9 @@
             <div class="glass-card rounded-2xl p-8 mb-8">
                 <h2 class="text-3xl font-bold gradient-text mb-6">趋势分析</h2>
                 <div class="flex space-x-4 mb-6">
-                    <button class="px-4 py-2 bg-orange-500 text-white rounded-lg">1年</button>
-                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-orange-100">3年</button>
-                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-orange-100">5年</button>
+                    <button onclick="updateTrendChart('1year')" class="px-4 py-2 bg-orange-500 text-white rounded-lg">1年</button>
+                    <button onclick="updateTrendChart('3year')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-orange-100">3年</button>
+                    <button onclick="updateTrendChart('5year')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-orange-100">5年</button>
                 </div>
                 <div class="chart-container p-6">
                     <canvas id="trendChart" width="800" height="400"></canvas>
@@ -435,29 +435,80 @@
                 }]
             },
             trends: {
-                labels: ['2021', '2022', '2023', '2024', '2025', '2026'],
-                datasets: [
-                    {
-                        label: '传统寿险',
-                        data: [3.2, 3.4, 3.6, 3.8, 4.0, 4.2],
-                        borderColor: '#FF6B35',
-                        backgroundColor: 'rgba(255, 107, 53, 0.1)'
-                    },
-                    {
-                        label: '分红险',
-                        data: [3.5, 3.7, 3.9, 4.1, 4.3, 4.5],
-                        borderColor: '#FF8C42',
-                        backgroundColor: 'rgba(255, 140, 66, 0.1)'
-                    },
-                    {
-                        label: '万能险',
-                        data: [3.8, 4.0, 4.2, 4.4, 4.6, 4.8],
-                        borderColor: '#FFB627',
-                        backgroundColor: 'rgba(255, 182, 39, 0.1)'
-                    }
-                ]
+                '1year': {
+                    labels: ['2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06'],
+                    datasets: [
+                        {
+                            label: '传统寿险',
+                            data: [4.1, 4.2, 4.3, 4.2, 4.4, 4.5],
+                            borderColor: '#FF6B35',
+                            backgroundColor: 'rgba(255, 107, 53, 0.1)'
+                        },
+                        {
+                            label: '分红险',
+                            data: [4.3, 4.4, 4.5, 4.4, 4.6, 4.7],
+                            borderColor: '#FF8C42',
+                            backgroundColor: 'rgba(255, 140, 66, 0.1)'
+                        },
+                        {
+                            label: '万能险',
+                            data: [4.5, 4.6, 4.7, 4.6, 4.8, 4.9],
+                            borderColor: '#FFB627',
+                            backgroundColor: 'rgba(255, 182, 39, 0.1)'
+                        }
+                    ]
+                },
+                '3year': {
+                    labels: ['2024', '2025', '2026'],
+                    datasets: [
+                        {
+                            label: '传统寿险',
+                            data: [3.8, 4.0, 4.5],
+                            borderColor: '#FF6B35',
+                            backgroundColor: 'rgba(255, 107, 53, 0.1)'
+                        },
+                        {
+                            label: '分红险',
+                            data: [4.1, 4.3, 4.7],
+                            borderColor: '#FF8C42',
+                            backgroundColor: 'rgba(255, 140, 66, 0.1)'
+                        },
+                        {
+                            label: '万能险',
+                            data: [4.4, 4.6, 4.9],
+                            borderColor: '#FFB627',
+                            backgroundColor: 'rgba(255, 182, 39, 0.1)'
+                        }
+                    ]
+                },
+                '5year': {
+                    labels: ['2022', '2023', '2024', '2025', '2026'],
+                    datasets: [
+                        {
+                            label: '传统寿险',
+                            data: [3.4, 3.6, 3.8, 4.0, 4.5],
+                            borderColor: '#FF6B35',
+                            backgroundColor: 'rgba(255, 107, 53, 0.1)'
+                        },
+                        {
+                            label: '分红险',
+                            data: [3.7, 3.9, 4.1, 4.3, 4.7],
+                            borderColor: '#FF8C42',
+                            backgroundColor: 'rgba(255, 140, 66, 0.1)'
+                        },
+                        {
+                            label: '万能险',
+                            data: [4.0, 4.2, 4.4, 4.6, 4.9],
+                            borderColor: '#FFB627',
+                            backgroundColor: 'rgba(255, 182, 39, 0.1)'
+                        }
+                    ]
+                }
             }
         };
+        
+        // 存储图表实例
+        let trendChartInstance = null;
         
         // 初始化图表
         function initCharts() {
@@ -498,9 +549,9 @@
             // 趋势图表
             const trendCtx = document.getElementById('trendChart');
             if (trendCtx) {
-                new Chart(trendCtx, {
+                trendChartInstance = new Chart(trendCtx, {
                     type: 'line',
-                    data: chartData.trends,
+                    data: chartData.trends['1year'],
                     options: {
                         responsive: true,
                         plugins: {
@@ -645,6 +696,40 @@
                 });
             });
         });
+        
+        // 趋势图表更新函数
+        function updateTrendChart(period) {
+            // 更新按钮样式
+            document.querySelectorAll('#trends button').forEach(btn => {
+                btn.classList.remove('bg-orange-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-orange-500', 'text-white');
+            
+            // 更新图表数据
+            if (trendChartInstance) {
+                trendChartInstance.data = chartData.trends[period];
+                
+                // 更新图表标题
+                let title = '';
+                switch(period) {
+                    case '1year':
+                        title = '月度收益率对比 (1年)';
+                        break;
+                    case '3year':
+                        title = '年度收益率对比 (3年)';
+                        break;
+                    case '5year':
+                        title = '年度收益率对比 (5年)';
+                        break;
+                }
+                trendChartInstance.options.plugins.title.text = title;
+                
+                // 重新渲染图表
+                trendChartInstance.update();
+            }
+        }
         
         // 点击模态框外部关闭
         document.getElementById('imageModal').addEventListener('click', function(e) {
