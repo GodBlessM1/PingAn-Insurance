@@ -855,23 +855,91 @@
         
         // 图表初始化
         function initCharts() {
+            const timeRange = document.getElementById('timeRange').value;
+            console.log('当前时间范围:', timeRange);
+            
+            // 根据时间范围获取对应的年份数据
+            let years = [];
+            let irrData = [];
+            let industryData = [];
+            let traditionalData = [];
+            let dividendData = [];
+            let universalData = [];
+            let investmentData = [];
+            let annuityData = [];
+            
+            // 完整数据
+            const allYears = ['2020', '2021', '2022', '2023', '2024', '2025'];
+            const allIRRData = [3.2, 3.4, 3.5, 3.7, 3.8, 3.82];
+            const allIndustryData = [3.0, 3.1, 3.2, 3.3, 3.4, 3.5];
+            const allTraditionalData = [3.2, 3.3, 3.4, 3.5, 3.5, 3.5];
+            const allDividendData = [3.5, 3.6, 3.7, 3.8, 3.9, 3.9];
+            const allUniversalData = [3.8, 3.9, 4.0, 4.1, 4.1, 4.1];
+            const allInvestmentData = [4.2, 4.4, 4.5, 4.7, 4.8, 4.8];
+            const allAnnuityData = [3.3, 3.4, 3.5, 3.6, 3.6, 3.6];
+            
+            // 根据选择的时间范围过滤数据
+            switch(timeRange) {
+                case '1year':
+                    years = allYears.slice(-1);
+                    irrData = allIRRData.slice(-1);
+                    industryData = allIndustryData.slice(-1);
+                    traditionalData = allTraditionalData.slice(-1);
+                    dividendData = allDividendData.slice(-1);
+                    universalData = allUniversalData.slice(-1);
+                    investmentData = allInvestmentData.slice(-1);
+                    annuityData = allAnnuityData.slice(-1);
+                    break;
+                case '3years':
+                    years = allYears.slice(-3);
+                    irrData = allIRRData.slice(-3);
+                    industryData = allIndustryData.slice(-3);
+                    traditionalData = allTraditionalData.slice(-3);
+                    dividendData = allDividendData.slice(-3);
+                    universalData = allUniversalData.slice(-3);
+                    investmentData = allInvestmentData.slice(-3);
+                    annuityData = allAnnuityData.slice(-3);
+                    break;
+                case '5years':
+                    years = allYears.slice(-5);
+                    irrData = allIRRData.slice(-5);
+                    industryData = allIndustryData.slice(-5);
+                    traditionalData = allTraditionalData.slice(-5);
+                    dividendData = allDividendData.slice(-5);
+                    universalData = allUniversalData.slice(-5);
+                    investmentData = allInvestmentData.slice(-5);
+                    annuityData = allAnnuityData.slice(-5);
+                    break;
+                case 'all':
+                default:
+                    years = allYears;
+                    irrData = allIRRData;
+                    industryData = allIndustryData;
+                    traditionalData = allTraditionalData;
+                    dividendData = allDividendData;
+                    universalData = allUniversalData;
+                    investmentData = allInvestmentData;
+                    annuityData = allAnnuityData;
+                    break;
+            }
+            
             // 主趋势图
             const mainTrendCtx = document.getElementById('mainTrendChart');
             if (mainTrendCtx) {
                 new Chart(mainTrendCtx, {
                     type: 'line',
                     data: {
-                        labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                        labels: years,
                         datasets: [{
                             label: '平均IRR',
-                            data: [3.2, 3.4, 3.5, 3.7, 3.8, 3.82],
+                            data: irrData,
                             borderColor: '#FF6B35',
                             backgroundColor: 'rgba(255, 107, 53, 0.1)',
                             fill: true,
                             tension: 0.4
                         }, {
                             label: '行业基准',
-                            data: [3.0, 3.1, 3.2, 3.3, 3.4, 3.5],
+                            data: industryData,
                             borderColor: '#FFB627',
                             borderDash: [5, 5],
                             fill: false
@@ -916,26 +984,26 @@
                 new Chart(yearlyTrendCtx, {
                     type: 'bar',
                     data: {
-                        labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                        labels: years,
                         datasets: [{
                             label: '传统寿险',
-                            data: [3.2, 3.3, 3.4, 3.5, 3.5, 3.5],
+                            data: traditionalData,
                             backgroundColor: '#FF6B35'
                         }, {
                             label: '分红险',
-                            data: [3.5, 3.6, 3.7, 3.8, 3.9, 3.9],
+                            data: dividendData,
                             backgroundColor: '#FF8C42'
                         }, {
                             label: '万能险',
-                            data: [3.8, 3.9, 4.0, 4.1, 4.1, 4.1],
+                            data: universalData,
                             backgroundColor: '#FFB627'
                         }, {
                             label: '投连险',
-                            data: [4.2, 4.4, 4.5, 4.7, 4.8, 4.8],
+                            data: investmentData,
                             backgroundColor: '#FFD93D'
                         }, {
                             label: '年金险',
-                            data: [3.3, 3.4, 3.5, 3.6, 3.6, 3.6],
+                            data: annuityData,
                             backgroundColor: '#FFE066'
                         }]
                     },
@@ -1118,6 +1186,167 @@
                         responsive: true,
                         plugins: {
                             legend: { display: false }
+                        }
+                    }
+                });
+            }
+            
+            // 月度波动分析图表
+            const monthlyVolCtx = document.getElementById('monthlyVolChart');
+            if (monthlyVolCtx) {
+                new Chart(monthlyVolCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                        datasets: [{
+                            label: '2024年',
+                            data: [3.5, 3.6, 3.4, 3.7, 3.8, 3.6, 3.9, 4.0, 3.8, 3.7, 3.9, 4.1],
+                            borderColor: '#FF6B35',
+                            backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }, {
+                            label: '2025年',
+                            data: [3.8, 3.9, 3.7, 4.0, 4.1, 3.9, 4.2, 4.3, 4.1, 4.0, 4.2, 4.4],
+                            borderColor: '#FFB627',
+                            backgroundColor: 'rgba(255, 182, 39, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
+                        scales: {
+                            y: { beginAtZero: false, min: 3.0, max: 4.5 }
+                        }
+                    }
+                });
+            }
+            
+            // 产品类型收益趋势图表
+            const productTrendCtx = document.getElementById('productTrendChart');
+            if (productTrendCtx) {
+                new Chart(productTrendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                        datasets: [{
+                            label: '传统寿险',
+                            data: [3.2, 3.3, 3.4, 3.5, 3.5, 3.5],
+                            borderColor: '#FF6B35',
+                            tension: 0.4
+                        }, {
+                            label: '分红险',
+                            data: [3.5, 3.6, 3.7, 3.8, 3.9, 3.9],
+                            borderColor: '#FF8C42',
+                            tension: 0.4
+                        }, {
+                            label: '万能险',
+                            data: [3.8, 3.9, 4.0, 4.1, 4.1, 4.1],
+                            borderColor: '#FFB627',
+                            tension: 0.4
+                        }, {
+                            label: '投连险',
+                            data: [4.2, 4.4, 4.5, 4.7, 4.8, 4.8],
+                            borderColor: '#FFD93D',
+                            tension: 0.4
+                        }, {
+                            label: '年金险',
+                            data: [3.3, 3.4, 3.5, 3.6, 3.6, 3.6],
+                            borderColor: '#FFE066',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
+                        scales: {
+                            y: { beginAtZero: false, min: 3.0, max: 5.0 }
+                        }
+                    }
+                });
+            }
+            
+            // 时间-产品热力图
+            const timeProductHeatmapCtx = document.getElementById('timeProductHeatmap');
+            if (timeProductHeatmapCtx) {
+                const products = ['平安福', '金裕人生', '智胜人生', '世纪理财', '颐享年金', '御享金瑞', '智悦人生', '聚财宝'];
+                const years = ['2020', '2021', '2022', '2023', '2024', '2025'];
+                
+                const heatmapData = [];
+                products.forEach(product => {
+                    const row = [];
+                    years.forEach(year => {
+                        row.push((Math.random() * 2 + 3).toFixed(2));
+                    });
+                    heatmapData.push(row);
+                });
+                
+                new Chart(timeProductHeatmapCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: years,
+                        datasets: products.map((product, index) => ({
+                            label: product,
+                            data: heatmapData[index],
+                            backgroundColor: [
+                                '#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', 
+                                '#FFE066', '#FF6B35', '#FF8C42', '#FFB627'
+                            ][index]
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
+                        scales: {
+                            y: { beginAtZero: false, min: 2.5, max: 5.5 }
+                        }
+                    }
+                });
+            }
+            
+            // 地区-渠道热力图
+            const regionChannelHeatmapCtx = document.getElementById('regionChannelHeatmap');
+            if (regionChannelHeatmapCtx) {
+                const regions = ['北京', '上海', '广州', '深圳', '杭州', '南京', '成都', '武汉'];
+                const channels = ['代理人', '银行', '电销', '网销'];
+                
+                const heatmapData = [];
+                regions.forEach(region => {
+                    const row = [];
+                    channels.forEach(channel => {
+                        row.push((Math.random() * 2 + 3).toFixed(2));
+                    });
+                    heatmapData.push(row);
+                });
+                
+                new Chart(regionChannelHeatmapCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: channels,
+                        datasets: regions.map((region, index) => ({
+                            label: region,
+                            data: heatmapData[index],
+                            backgroundColor: [
+                                '#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', 
+                                '#FFE066', '#FF6B35', '#FF8C42', '#FFB627'
+                            ][index]
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
+                        scales: {
+                            y: { beginAtZero: false, min: 2.5, max: 5.5 }
                         }
                     }
                 });
