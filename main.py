@@ -387,22 +387,11 @@ class ReturnsAnalyzer:
         执行完整分析流程
         """
         try:
-            # 阶段1: 数据提取
             self.extract_data()
-            
-            # 阶段2: 数据清洗与转换
             self.transform_data()
-            
-            # 阶段3: 收益计算
             self.calculate_returns()
-            
-            # 阶段4: 数据分析
             self.analyze_data()
-            
-            # 阶段5: 生成可视化
             self.generate_visualizations()
-            
-            # 阶段6: 生成报告
             self.generate_reports()
             
             self.logger.info("\n" + "=" * 60)
@@ -412,6 +401,29 @@ class ReturnsAnalyzer:
         except Exception as e:
             self.logger.error(f"分析流程失败: {str(e)}", exc_info=True)
             raise
+    
+    def run_with_mock_data(self, mode: str):
+        """
+        使用模拟数据运行指定模式
+        
+        Args:
+            mode: 运行模式
+        """
+        self.raw_data = self._generate_mock_data()
+        self.transform_data()
+        
+        if mode in ['calculate', 'analyze', 'visualize', 'reports']:
+            self.calculate_returns()
+        
+        if mode in ['analyze', 'visualize', 'reports']:
+            self.analyze_data()
+        
+        if mode == 'visualize':
+            self.generate_visualizations()
+        
+        if mode == 'reports':
+            self.generate_visualizations()
+            self.generate_reports()
     
     def _generate_mock_data(self) -> Dict[str, pd.DataFrame]:
         """
@@ -545,34 +557,22 @@ def main():
     
     args = parser.parse_args()
     
-    # 初始化分析器
     analyzer = ReturnsAnalyzer(config_path=args.config)
     
-    # 根据模式执行
     if args.mode == 'full':
         analyzer.run_full_pipeline()
     elif args.mode == 'extract':
         analyzer.extract_data()
     elif args.mode == 'transform':
-        analyzer.raw_data = analyzer._generate_mock_data()
-        analyzer.transform_data()
+        analyzer.run_with_mock_data('transform')
     elif args.mode == 'calculate':
-        analyzer.raw_data = analyzer._generate_mock_data()
-        analyzer.transform_data()
-        analyzer.calculate_returns()
+        analyzer.run_with_mock_data('calculate')
     elif args.mode == 'analyze':
-        analyzer.raw_data = analyzer._generate_mock_data()
-        analyzer.transform_data()
-        analyzer.calculate_returns()
-        analyzer.analyze_data()
+        analyzer.run_with_mock_data('analyze')
     elif args.mode == 'visualize':
-        analyzer.raw_data = analyzer._generate_mock_data()
-        analyzer.transform_data()
-        analyzer.calculate_returns()
-        analyzer.analyze_data()
-        analyzer.generate_visualizations()
+        analyzer.run_with_mock_data('visualize')
     elif args.mode == 'reports':
-        analyzer.run_full_pipeline()
+        analyzer.run_with_mock_data('reports')
 
 
 if __name__ == '__main__':
