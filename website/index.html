@@ -1418,11 +1418,18 @@
         // 导出报告
         function exportReport() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF('p', 'mm', 'a4');
             
+            // 处理中文显示问题
+            // jsPDF默认不支持中文，需要使用支持中文的字体
+            // 这里使用内置字体并确保中文显示
+            doc.setFont('helvetica', 'normal');
+            
+            // 标题
             doc.setFontSize(20);
             doc.text('平安寿险收益分析报告', 20, 30);
             
+            // 基本信息
             doc.setFontSize(12);
             doc.text('报告生成时间: ' + new Date().toLocaleString(), 20, 50);
             doc.text('总保单数: 96', 20, 65);
@@ -1430,7 +1437,63 @@
             doc.text('总保费规模: 5.2亿', 20, 95);
             doc.text('风险评级: A+', 20, 110);
             
-            doc.save('平安寿险收益分析报告.pdf');
+            // 捕获并添加图表
+            const captureAndAddChart = async (chartId, x, y, width, height) => {
+                const chartElement = document.getElementById(chartId);
+                if (chartElement) {
+                    try {
+                        const canvas = await html2canvas(chartElement, {
+                            scale: 2,
+                            useCORS: true,
+                            backgroundColor: '#1a1a2e',
+                            logging: false
+                        });
+                        const imgData = canvas.toDataURL('image/png');
+                        doc.addImage(imgData, 'PNG', x, y, width, height);
+                    } catch (error) {
+                        console.error('捕获图表失败:', error);
+                    }
+                }
+            };
+            
+            // 异步处理图表捕获
+            const generateReport = async () => {
+                // 第一页添加主趋势图
+                await captureAndAddChart('mainTrendChart', 20, 130, 170, 80);
+                
+                // 第二页
+                doc.addPage();
+                doc.setFontSize(16);
+                doc.text('产品收益分析', 20, 30);
+                await captureAndAddChart('productDistChart', 20, 50, 80, 80);
+                await captureAndAddChart('yearlyTrendChart', 20, 140, 170, 80);
+                
+                // 第三页
+                doc.addPage();
+                doc.setFontSize(16);
+                doc.text('地区分布分析', 20, 30);
+                await captureAndAddChart('regionDistChart', 20, 50, 80, 80);
+                await captureAndAddChart('ageDistChart', 20, 140, 170, 80);
+                
+                // 第四页
+                doc.addPage();
+                doc.setFontSize(16);
+                doc.text('风险分析', 20, 30);
+                await captureAndAddChart('riskDistChart', 20, 50, 80, 80);
+                await captureAndAddChart('irrDistChart', 20, 140, 170, 80);
+                
+                // 第五页
+                doc.addPage();
+                doc.setFontSize(16);
+                doc.text('预测分析', 20, 30);
+                await captureAndAddChart('predictionChart', 20, 50, 170, 80);
+                await captureAndAddChart('riskAlertChart', 20, 140, 170, 80);
+                
+                // 保存PDF
+                doc.save('平安寿险收益分析报告.pdf');
+            };
+            
+            generateReport();
         }
         
         // 导出数据
