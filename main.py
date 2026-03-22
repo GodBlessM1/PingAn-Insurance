@@ -102,6 +102,8 @@ class ReturnsAnalyzer:
         # 使用本地提取器 (开发/测试环境)
         # 生产环境可替换为 HiveExtractor
         data_source_config = self.config.get('data_source.local', {})
+        # 明确指定使用CSV格式
+        data_source_config['file_format'] = 'csv'
         self.extractor = LocalExtractor(data_source_config)
         self.extractor.connect()
         
@@ -114,11 +116,11 @@ class ReturnsAnalyzer:
             self.logger.info("加载数据文件...")
             
             # 尝试读取各表
-            tables = ['POLICY', 'PREMIUM', 'CASH_VALUE', 'DIVIDEND']
+            tables = ['policy', 'premium', 'cash_value', 'dividend']
             for table in tables:
                 try:
-                    df = self.extractor.extract_table(table.lower())
-                    self.raw_data[table.lower()] = df
+                    df = self.extractor.extract_table(table)
+                    self.raw_data[table] = df
                     self.logger.info(f"  ✓ {table}: {len(df)} 行")
                 except FileNotFoundError:
                     self.logger.warning(f"  ✗ {table}: 文件不存在，将使用模拟数据")
