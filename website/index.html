@@ -535,6 +535,28 @@
                 });
             }
             
+            // 风险分布图表
+            const riskDistCtx = document.getElementById('riskDistributionChart');
+            if (riskDistCtx) {
+                new Chart(riskDistCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['低风险', '中风险', '高风险'],
+                        datasets: [{
+                            data: [65, 25, 10],
+                            backgroundColor: ['#4CAF50', '#FFB627', '#FF6B35']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: { display: true, text: '风险分布' },
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+            
             // ML预测图表
             const mlPredCtx = document.getElementById('mlPredictionChart');
             if (mlPredCtx) {
@@ -569,6 +591,39 @@
                         responsive: true,
                         plugins: {
                             title: { display: true, text: '收益预测' }
+                        }
+                    }
+                });
+            }
+            
+            // 风险预警图表
+            const mlRiskCtx = document.getElementById('mlRiskChart');
+            if (mlRiskCtx) {
+                new Chart(mlRiskCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['低风险', '中风险', '高风险', '极高风险'],
+                        datasets: [{
+                            label: '预测风险比例',
+                            data: [60, 25, 10, 5],
+                            backgroundColor: ['#4CAF50', '#FFB627', '#FF8C42', '#FF6B35']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: { display: true, text: '风险预警' }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
                         }
                     }
                 });
