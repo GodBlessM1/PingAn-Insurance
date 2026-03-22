@@ -1,0 +1,106 @@
+# PingAn Life Returns Analyzer - Configuration File
+# 平安寿险收益分析器 - 配置文件
+
+# Project Settings
+project:
+  name: "PingAn_Life_Returns_Analyzer"
+  version: "1.0.0"
+  author: "Data Analytics Team"
+  description: "平安寿险各类险种收益分析工具"
+
+# Data Source Configuration
+# 数据源配置
+data_source:
+  type: "local"
+  local:
+    raw_data_path: "data/raw"
+    processed_data_path: "data/processed"
+
+# Database Table Names
+# 核心数据表名
+tables:
+  policy: "POLICY"
+  premium: "PREMIUM"
+  cash_value: "CASH_VALUE"
+  dividend: "DIVIDEND"
+
+# Analysis Period
+# 分析时间范围
+analysis_period:
+  start_year: 2020
+  end_year: 2024
+
+# Product Categories
+# 产品分类定义
+product_categories:
+  traditional_life:
+    name: "传统寿险"
+    codes: ["TL01", "TL02", "TL03"]
+  participating:
+    name: "分红型寿险"
+    codes: ["PA01", "PA02"]
+  universal_life:
+    name: "万能险"
+    codes: ["UL01", "UL02"]
+  investment_linked:
+    name: "投连险"
+    codes: ["IL01", "IL02"]
+  annuity:
+    name: "年金险"
+    codes: ["AN01", "AN02"]
+
+# Calculation Parameters
+# 收益计算参数
+calculation:
+  irr:
+    max_iterations: 1000
+    tolerance: 1e-6
+  returns:
+    annualization_method: "compound"
+  edge_cases:
+    min_policy_duration_months: 12
+    min_premium_threshold: 1000
+  percentiles: [0.05, 0.25, 0.5, 0.75, 0.95]
+
+# Data Processing
+# 数据处理配置
+processing:
+  sampling:
+    enabled: false
+    sample_rate: 0.1
+  parallel:
+    enabled: true
+    n_workers: 4
+  output_format: "parquet"
+
+# Visualization
+# 可视化配置
+visualization:
+  style:
+    theme: "seaborn"
+    font_family: "SimHei"
+    figure_size: [12, 8]
+    dpi: 150
+  colors:
+    traditional_life: "#1f77b4"
+    participating: "#ff7f0e"
+    universal_life: "#2ca02c"
+    investment_linked: "#d62728"
+    annuity: "#9467bd"
+  output_formats: ["png", "html"]
+
+# Report Generation
+# 报告生成配置
+reports:
+  excel:
+    enabled: true
+    include_charts: true
+
+# Logging
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/analyzer.log"
+  max_bytes: 10485760
+  backup_count: 5

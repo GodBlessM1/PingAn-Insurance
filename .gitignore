@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Data Files (Sensitive)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Reports
+reports/*.xlsx
+reports/*.pdf
+reports/*.html
+reports/charts/*.png
+reports/charts/*.jpg
+!reports/.gitkeep
+!reports/charts/.gitkeep
+
+# Logs
+logs/*.log
+!logs/.gitkeep
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Configuration with Secrets
+config/config_local.yaml
+config/secrets.yaml
+
+# Test Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Airflow
+airflow/logs/
+airflow/*.pid
+
+# Streamlit
+.streamlit/
