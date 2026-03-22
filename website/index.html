@@ -1417,86 +1417,48 @@
         
         // 导出报告
         function exportReport() {
-            // 创建一个简单的PDF报告，避免中文乱码问题
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
+            // 使用html2canvas捕获整个仪表板区域
+            const dashboard = document.querySelector('.page-section.active');
+            if (!dashboard) {
+                alert('请先选择一个页面');
+                return;
+            }
             
-            // 使用内置字体并设置编码
-            doc.setFont('helvetica', 'normal');
-            
-            // 标题 - 使用英文避免乱码
-            doc.setFontSize(20);
-            doc.text('PingAn Life Returns Analysis Report', 20, 30);
-            
-            // 基本信息 - 混合英文和数字避免乱码
-            doc.setFontSize(12);
-            doc.text('Report Generated: ' + new Date().toLocaleString(), 20, 50);
-            doc.text('Total Policies: 96', 20, 65);
-            doc.text('Average IRR: 3.82%', 20, 80);
-            doc.text('Total Premium: 520,000,000', 20, 95);
-            doc.text('Risk Rating: A+', 20, 110);
-            
-            // 添加中文说明
-            doc.setFontSize(10);
-            doc.text('(Chinese: 平安寿险收益分析报告)', 20, 125);
-            
-            // 捕获并添加图表
-            const captureAndAddChart = async (chartId, x, y, width, height) => {
-                const chartElement = document.getElementById(chartId);
-                if (chartElement) {
-                    try {
-                        const canvas = await html2canvas(chartElement, {
-                            scale: 2,
-                            useCORS: true,
-                            backgroundColor: '#1a1a2e',
-                            logging: false
-                        });
-                        const imgData = canvas.toDataURL('image/png');
-                        doc.addImage(imgData, 'PNG', x, y, width, height);
-                    } catch (error) {
-                        console.error('Chart capture failed:', error);
-                    }
+            html2canvas(dashboard, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#1a1a2e',
+                logging: false
+            }).then(canvas => {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 210;
+                const pageHeight = 295;
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                
+                let position = 0;
+                
+                // 添加第一页
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                
+                // 添加更多页面（如果需要）
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
                 }
-            };
-            
-            // 异步处理图表捕获
-            const generateReport = async () => {
-                // 第一页添加主趋势图
-                await captureAndAddChart('mainTrendChart', 20, 140, 170, 80);
-                
-                // 第二页
-                doc.addPage();
-                doc.setFontSize(16);
-                doc.text('Product Performance Analysis', 20, 30);
-                await captureAndAddChart('productDistChart', 20, 50, 80, 80);
-                await captureAndAddChart('yearlyTrendChart', 20, 140, 170, 80);
-                
-                // 第三页
-                doc.addPage();
-                doc.setFontSize(16);
-                doc.text('Regional Distribution Analysis', 20, 30);
-                await captureAndAddChart('regionDistChart', 20, 50, 80, 80);
-                await captureAndAddChart('ageDistChart', 20, 140, 170, 80);
-                
-                // 第四页
-                doc.addPage();
-                doc.setFontSize(16);
-                doc.text('Risk Analysis', 20, 30);
-                await captureAndAddChart('riskDistChart', 20, 50, 80, 80);
-                await captureAndAddChart('irrDistChart', 20, 140, 170, 80);
-                
-                // 第五页
-                doc.addPage();
-                doc.setFontSize(16);
-                doc.text('Forecast Analysis', 20, 30);
-                await captureAndAddChart('predictionChart', 20, 50, 170, 80);
-                await captureAndAddChart('riskAlertChart', 20, 140, 170, 80);
                 
                 // 保存PDF
-                doc.save('PingAn_Life_Analysis_Report.pdf');
-            };
-            
-            generateReport();
+                pdf.save('平安寿险收益分析报告.pdf');
+            }).catch(error => {
+                console.error('PDF生成失败:', error);
+                alert('PDF生成失败，请重试');
+            });
         }
         
         // 导出数据
