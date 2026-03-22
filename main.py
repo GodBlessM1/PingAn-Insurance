@@ -31,6 +31,8 @@ from src.transform import DataPipeline
 from src.calculate import PolicyCalculator
 from src.analyze import DataAggregator, TrendAnalyzer
 from src.visualize import ChartGenerator, ReportGenerator
+from src.validation import DataValidator, QualityReporter
+from src.statistics import HypothesisTester, CorrelationAnalyzer, RegressionAnalyzer
 
 # 配置日志
 def setup_logging(config):
@@ -256,6 +258,98 @@ class ReturnsAnalyzer:
         self.logger.info("数据分析完成")
         return results
     
+    def validate_data(self) -> Dict:
+        """
+        阶段4.5: 数据质量验证
+        
+        Returns:
+            验证结果字典
+        """
+        self.logger.info("\n" + "=" * 60)
+        self.logger.info("阶段4.5: 数据质量验证")
+        self.logger.info("=" * 60)
+        
+        if self.calculated_data is None or self.calculated_data.empty:
+            raise ValueError("计算数据为空，无法进行验证")
+        
+        validation_config = self.config.get('validation', {})
+        self.validator = DataValidator(validation_config)
+        self.quality_reporter = QualityReporter()
+        
+        results = {}
+        
+        self.logger.info("执行数据质量检查...")
+        validation_result = self.validator.validate_policy_data(self.calculated_data)
+        results['validation'] = validation_result
+        
+        self.logger.info("生成数据质量报告...")
+        quality_summary = self.quality_reporter.generate_summary_dict({
+            'summary': validation_result
+        })
+        results['quality_report'] = quality_summary
+        
+        self.logger.info("  ✓ 数据质量验证完成")
+        
+        return results
+    
+    def statistical_analysis(self) -> Dict:
+        """
+        阶段4.6: 统计分析
+        
+        Returns:
+            统计分析结果字典
+        """
+        self.logger.info("\n" + "=" * 60)
+        self.logger.info("阶段4.6: 统计分析")
+        self.logger.info("=" * 60)
+        
+        if self.calculated_data is None or self.calculated_data.empty:
+            raise ValueError("计算数据为空，无法进行统计分析")
+        
+        results = {}
+        
+        self.logger.info("执行假设检验...")
+        self.hypothesis_tester = HypothesisTester()
+        
+        if 'product_category' in self.calculated_data.columns:
+            ttest_result = self.hypothesis_tester.compare_groups_ttest(
+                self.calculated_data,
+                value_col='irr',
+                group_col='product_category'
+            )
+            if 'error' not in ttest_result:
+                results['ttest_irr_by_category'] = ttest_result
+                self.logger.info(f"  ✓ IRR差异检验完成")
+        
+        self.logger.info("执行相关性分析...")
+        self.correlation_analyzer = CorrelationAnalyzer()
+        
+        if 'irr' in self.calculated_data.columns and 'annual_premium' in self.calculated_data.columns:
+            corr_result = self.correlation_analyzer.pearson_correlation(
+                self.calculated_data,
+                col1='irr',
+                col2='annual_premium'
+            )
+            if 'error' not in corr_result:
+                results['correlation_irr_premium'] = corr_result
+                self.logger.info("  ✓ 相关性分析完成")
+        
+        self.logger.info("执行回归分析...")
+        self.regression_analyzer = RegressionAnalyzer()
+        
+        if 'irr' in self.calculated_data.columns and 'annual_premium' in self.calculated_data.columns:
+            regression_result = self.regression_analyzer.simple_linear_regression(
+                self.calculated_data,
+                x_col='annual_premium',
+                y_col='irr'
+            )
+            if 'error' not in regression_result:
+                results['regression_irr_premium'] = regression_result
+                self.logger.info("  ✓ 回归分析完成")
+        
+        self.logger.info("统计分析完成")
+        return results
+    
     def generate_visualizations(self):
         """
         阶段5: 生成可视化
@@ -393,6 +487,8 @@ class ReturnsAnalyzer:
             self.transform_data()
             self.calculate_returns()
             self.analyze_data()
+            self.validate_data()
+            self.statistical_analysis()
             self.generate_visualizations()
             self.generate_reports()
             
@@ -414,11 +510,17 @@ class ReturnsAnalyzer:
         self.raw_data = self._generate_mock_data()
         self.transform_data()
         
-        if mode in ['calculate', 'analyze', 'visualize', 'reports']:
+        if mode in ['calculate', 'analyze', 'visualize', 'reports', 'validate', 'statistics']:
             self.calculate_returns()
         
-        if mode in ['analyze', 'visualize', 'reports']:
+        if mode in ['analyze', 'visualize', 'reports', 'validate', 'statistics']:
             self.analyze_data()
+        
+        if mode in ['validate', 'statistics', 'reports']:
+            self.validate_data()
+        
+        if mode in ['statistics', 'reports']:
+            self.statistical_analysis()
         
         if mode == 'visualize':
             self.generate_visualizations()
@@ -539,6 +641,8 @@ def main():
   python main.py --mode transform               # 仅数据清洗
   python main.py --mode calculate               # 仅收益计算
   python main.py --mode analyze                 # 仅数据分析
+  python main.py --mode validate                # 仅数据质量验证
+  python main.py --mode statistics              # 仅统计分析
   python main.py --mode visualize               # 仅生成可视化
   python main.py --mode reports                 # 仅生成报告
         '''
@@ -546,7 +650,7 @@ def main():
     
     parser.add_argument(
         '--mode',
-        choices=['full', 'extract', 'transform', 'calculate', 'analyze', 'visualize', 'reports'],
+        choices=['full', 'extract', 'transform', 'calculate', 'analyze', 'validate', 'statistics', 'visualize', 'reports'],
         default='full',
         help='运行模式 (默认: full)'
     )

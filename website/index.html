@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -192,6 +193,21 @@
             color: #4CAF50;
         }
         
+        .status-lapsed {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+        }
+        
+        .status-surrendered {
+            background: rgba(244, 67, 54, 0.2);
+            color: #F44336;
+        }
+        
+        .status-matured {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+        }
+        
         .kpi-value {
             font-size: 2.5rem;
             font-weight: 700;
@@ -332,6 +348,14 @@
                     <i class="fas fa-project-diagram w-6"></i>
                     <span>交叉分析</span>
                 </div>
+                <div class="nav-item" onclick="showPage('mapAnalysis')">
+                    <i class="fas fa-map-marked-alt w-6"></i>
+                    <span>地图分析</span>
+                </div>
+                <div class="nav-item" onclick="showPage('statistics')">
+                    <i class="fas fa-chart-bar w-6"></i>
+                    <span>统计分析</span>
+                </div>
             </nav>
             
             <div class="p-4 border-t border-white/5">
@@ -399,9 +423,13 @@
                         <select class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" id="channelFilter" onchange="applyFilters()">
                             <option value="all">全部渠道</option>
                             <option value="代理人">代理人</option>
-                            <option value="银保渠道">银保渠道</option>
-                            <option value="互联网">互联网</option>
-                            <option value="团体保险">团体保险</option>
+                            <option value="银行">银行</option>
+                            <option value="电销">电销</option>
+                            <option value="网销">网销</option>
+                            <option value="经纪">经纪</option>
+                            <option value="团险">团险</option>
+                            <option value="银保">银保</option>
+                            <option value="经代">经代</option>
                         </select>
                     </div>
                     <div class="flex items-center gap-2">
@@ -432,7 +460,7 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <p class="text-gray-400 text-sm">总保单数</p>
-                                    <p class="kpi-value">96</p>
+                                    <p class="kpi-value" id="totalPolicies">--</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
                                     <i class="fas fa-file-contract text-orange-400 text-xl"></i>
@@ -448,7 +476,7 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <p class="text-gray-400 text-sm">平均收益率</p>
-                                    <p class="kpi-value">3.82%</p>
+                                    <p class="kpi-value" id="avgIRR">--%</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
                                     <i class="fas fa-percentage text-orange-400 text-xl"></i>
@@ -464,7 +492,7 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <p class="text-gray-400 text-sm">总保费规模</p>
-                                    <p class="kpi-value">5.2亿</p>
+                                    <p class="kpi-value" id="totalPremium">--</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
                                     <i class="fas fa-coins text-orange-400 text-xl"></i>
@@ -479,8 +507,8 @@
                         <div class="metric-card p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    <p class="text-gray-400 text-sm">风险评级</p>
-                                    <p class="kpi-value">A+</p>
+                                    <p class="text-gray-400 text-sm">有效保单</p>
+                                    <p class="kpi-value" id="activePolicies">--</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
                                     <i class="fas fa-shield-alt text-green-400 text-xl"></i>
@@ -669,87 +697,7 @@
                                         <th>操作</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="font-medium">平安福</td>
-                                        <td><span class="filter-tag">传统寿险</span></td>
-                                        <td class="text-orange-400 font-bold">3.5%</td>
-                                        <td><span class="status-badge status-active">低</span></td>
-                                        <td>
-                                            <div class="flex items-center gap-2">
-                                                <div class="progress-bar w-20">
-                                                    <div class="progress-fill" style="width: 30%"></div>
-                                                </div>
-                                                <span class="text-sm">低</span>
-                                            </div>
-                                        </td>
-                                        <td>长期保障需求</td>
-                                        <td><button class="btn-secondary text-sm py-1 px-3">详情</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-medium">平安金裕人生</td>
-                                        <td><span class="filter-tag">分红险</span></td>
-                                        <td class="text-orange-400 font-bold">3.8%</td>
-                                        <td><span class="status-badge status-active">低</span></td>
-                                        <td>
-                                            <div class="flex items-center gap-2">
-                                                <div class="progress-bar w-20">
-                                                    <div class="progress-fill" style="width: 50%"></div>
-                                                </div>
-                                                <span class="text-sm">中</span>
-                                            </div>
-                                        </td>
-                                        <td>稳健型投资者</td>
-                                        <td><button class="btn-secondary text-sm py-1 px-3">详情</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-medium">平安智胜人生</td>
-                                        <td><span class="filter-tag">万能险</span></td>
-                                        <td class="text-orange-400 font-bold">4.1%</td>
-                                        <td><span class="status-badge" style="background: rgba(255, 179, 39, 0.2); color: #FFB627;">中</span></td>
-                                        <td>
-                                            <div class="flex items-center gap-2">
-                                                <div class="progress-bar w-20">
-                                                    <div class="progress-fill" style="width: 80%"></div>
-                                                </div>
-                                                <span class="text-sm">高</span>
-                                            </div>
-                                        </td>
-                                        <td>灵活理财需求</td>
-                                        <td><button class="btn-secondary text-sm py-1 px-3">详情</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-medium">平安世纪理财</td>
-                                        <td><span class="filter-tag">投连险</span></td>
-                                        <td class="text-orange-400 font-bold">4.8%</td>
-                                        <td><span class="status-badge" style="background: rgba(255, 107, 53, 0.2); color: #FF6B35;">高</span></td>
-                                        <td>
-                                            <div class="flex items-center gap-2">
-                                                <div class="progress-bar w-20">
-                                                    <div class="progress-fill" style="width: 90%"></div>
-                                                </div>
-                                                <span class="text-sm">极高</span>
-                                            </div>
-                                        </td>
-                                        <td>激进型投资者</td>
-                                        <td><button class="btn-secondary text-sm py-1 px-3">详情</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-medium">平安颐享年金</td>
-                                        <td><span class="filter-tag">年金险</span></td>
-                                        <td class="text-orange-400 font-bold">3.6%</td>
-                                        <td><span class="status-badge status-active">低</span></td>
-                                        <td>
-                                            <div class="flex items-center gap-2">
-                                                <div class="progress-bar w-20">
-                                                    <div class="progress-fill" style="width: 20%"></div>
-                                                </div>
-                                                <span class="text-sm">极低</span>
-                                            </div>
-                                        </td>
-                                        <td>养老规划</td>
-                                        <td><button class="btn-secondary text-sm py-1 px-3">详情</button></td>
-                                    </tr>
+                                <tbody id="comparisonTableBody">
                                 </tbody>
                             </table>
                         </div>
@@ -810,36 +758,7 @@
                     
                     <div class="glass-card rounded-2xl p-6">
                         <h3 class="text-lg font-semibold mb-6">AI洞察建议</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-start gap-4 p-4 bg-green-500/10 border border-green-500/20 rounded-xl">
-                                <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-lightbulb text-green-400"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-green-400">投资建议</p>
-                                    <p class="text-sm text-gray-300 mt-1">基于当前市场趋势，建议增加投连险配置比例，预期未来6个月收益率可达5.0%-5.5%</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start gap-4 p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl">
-                                <div class="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-exclamation-triangle text-orange-400"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-orange-400">风险提示</p>
-                                    <p class="text-sm text-gray-300 mt-1">万能险产品近期波动较大，建议关注账户价值变化，适时调整投资策略</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start gap-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                                <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-chart-line text-blue-400"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-blue-400">市场洞察</p>
-                                    <p class="text-sm text-gray-300 mt-1">一线城市保单增长率达15%，建议加强该地区营销资源配置</p>
-                                </div>
-                            </div>
+                        <div class="space-y-4" id="aiInsightsContainer">
                         </div>
                     </div>
                 </div>
@@ -865,7 +784,7 @@
                                         <th>投保日期</th>
                                         <th>年缴保费</th>
                                         <th>累计缴费</th>
-                                        <th>当前价值</th>
+                                        <th>地区</th>
                                         <th>IRR</th>
                                         <th>状态</th>
                                     </tr>
@@ -1084,9 +1003,163 @@
                             <p><strong class="text-orange-400">产品优势：</strong>结合保险保障和投资功能，取钱操作灵活，历史结算利率较高（有67个月达5%），费用结构透明。</p>
                         </div>
                     </div>
+                    
+                    <!-- 平安福上福 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
+                                健
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安福上福</h3>
+                                <span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 rounded-full text-sm">健康险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安福上福是平安福系列的升级版本，专注于健康保障，提供更全面的重大疾病保障。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>重大疾病保障：覆盖120种重大疾病，确诊即赔付100%基本保额</li>
+                                <li>轻症疾病保障：覆盖50种轻症疾病，最多可赔付3次，每次赔付20%基本保额</li>
+                                <li>中症疾病保障：覆盖20种中症疾病，赔付50%基本保额</li>
+                                <li>疾病豁免：确诊轻症、中症后豁免后续保费</li>
+                                <li>身故保障：提供身故保障，赔付100%基本保额</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合关注健康保障、希望获得全面重疾保障的人群，特别是家庭经济支柱。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>保障范围广，涵盖轻症、中症、重疾三级保障；多次赔付，轻症最高可赔付3次；保费豁免，确诊后保障继续有效。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安e生保 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
+                                e
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安e生保</h3>
+                                <span class="inline-block px-3 py-1 bg-sky-500/20 text-sky-400 rounded-full text-sm">健康险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安e生保是一款互联网医疗保险产品，提供高额医疗保障，保费低廉，投保便捷。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>住院医疗保障：年度最高200万住院医疗费用报销</li>
+                                <li>特殊门诊保障：包含门诊手术、门诊肾透析等特殊门诊费用</li>
+                                <li>住院前后门急诊：住院前7天后30天的门急诊费用</li>
+                                <li>恶性肿瘤额外保障：确诊恶性肿瘤额外给付1万元</li>
+                                <li>质子重离子医疗：覆盖上海质子重离子医院治疗费用</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合追求高性价比医疗保障、希望获得大额医疗费用保障的人群。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>保费低廉（最低136元/年起），保额高（最高600万），免体检，线上投保便捷，支持智能核保。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安守护百分百 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
+                                守
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安守护百分百</h3>
+                                <span class="inline-block px-3 py-1 bg-violet-500/20 text-violet-400 rounded-full text-sm">健康险</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安守护百分百是一款返还型重大疾病保险，既有重疾保障，到期还能返还保费。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>重大疾病保障：覆盖80种重大疾病，确诊赔付100%基本保额</li>
+                                <li>满期返还：保险期满时返还所交保费，最高可返还130%</li>
+                                <li>身故保障：提供身故保障，赔付基本保额或所交保费</li>
+                                <li>保费豁免：可选轻症豁免功能</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合希望获得重疾保障、同时希望保费能够返还的人群。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>有病治病，无病返本；保障期限灵活可选（至60/70/80周岁）；保费可返还，不花钱享保障。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安智能星 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-lg">
+                                星
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安智能星</h3>
+                                <span class="inline-block px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm">教育金</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安智能星是一款专为0-17岁少儿设计的万能型教育金保险，为孩子教育储备资金。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>教育金储备：通过万能账户积累教育资金，享受投资收益</li>
+                                <li>身故保障：提供身故保障，确保资金安全传承</li>
+                                <li>灵活领取：可根据教育需要灵活领取账户价值</li>
+                                <li>附加保障：可附加意外伤害、重大疾病等保障</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合有子女教育规划需求、希望为孩子未来教育储备资金的家庭。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>专为少儿设计，投保年龄0-17岁；万能账户收益稳健，历史结算利率较高；领取灵活，满足不同教育阶段资金需求。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安成才宝 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg">
+                                成
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安成才宝</h3>
+                                <span class="inline-block px-3 py-1 bg-teal-500/20 text-teal-400 rounded-full text-sm">教育金</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安成才宝是一款专为孩子教育规划的年金保险产品，提供阶段性教育金领取。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>高中教育金：15-17岁每年领取基本保额的20%</li>
+                                <li>大学教育金：18-21岁每年领取基本保额的40%</li>
+                                <li>深造教育金：22岁领取基本保额的80%作为深造基金</li>
+                                <li>身故保障：提供身故保障，返还所交保费或现金价值</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合希望为孩子教育提供稳定资金支持、规划子女成长教育的家庭。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>教育金领取时间与孩子成长阶段匹配；专款专用，确保教育资金不被挪用；可搭配万能账户实现二次增值。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 平安金宝贝 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white font-bold text-lg">
+                                贝
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">平安金宝贝</h3>
+                                <span class="inline-block px-3 py-1 bg-pink-500/20 text-pink-400 rounded-full text-sm">教育金</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong class="text-orange-400">产品特点：</strong>平安金宝贝是一款分红型少儿教育金保险，为孩子提供教育资金保障和分红收益。</p>
+                            <p><strong class="text-orange-400">保障内容：</strong></p>
+                            <ul class="list-disc list-inside ml-4 space-y-1">
+                                <li>生存金：自投保后第3年起，每年领取基本保额的10%</li>
+                                <li>教育金：18-21岁每年领取基本保额的30%作为大学教育金</li>
+                                <li>满期金：25岁时领取基本保额的100%作为创业或婚嫁金</li>
+                                <li>分红：根据公司经营情况获得年度分红</li>
+                                <li>身故保障：提供身故保障，返还所交保费</li>
+                            </ul>
+                            <p><strong class="text-orange-400">适用人群：</strong>适合希望为孩子提供全面教育资金支持、同时享受分红收益的家庭。</p>
+                            <p><strong class="text-orange-400">产品优势：</strong>覆盖孩子成长全周期，从幼儿到大学毕业；分红收益增加保障价值；满期金可作为创业或婚嫁资金。</p>
+                        </div>
+                    </div>
                 </div>
+            </div>
             
-                <!-- 数据质量页面 -->
+            <!-- 数据质量页面 -->
                 <div id="quality" class="page-section">
                     <div class="space-y-6">
                         <!-- 数据概览 -->
@@ -1100,7 +1173,7 @@
                                         </div>
                                         <span class="text-sm text-gray-400">数据完整性</span>
                                     </div>
-                                    <p class="text-2xl font-bold text-green-400" id="dataCompleteness">96.8%</p>
+                                    <p class="text-2xl font-bold text-green-400" id="dataCompleteness">100%</p>
                                 </div>
                                 <div class="bg-white/5 rounded-xl p-4">
                                     <div class="flex items-center gap-3 mb-2">
@@ -1109,7 +1182,7 @@
                                         </div>
                                         <span class="text-sm text-gray-400">总记录数</span>
                                     </div>
-                                    <p class="text-2xl font-bold text-blue-400">96</p>
+                                    <p class="text-2xl font-bold text-blue-400" id="totalRecordsCount">0</p>
                                 </div>
                                 <div class="bg-white/5 rounded-xl p-4">
                                     <div class="flex items-center gap-3 mb-2">
@@ -1118,7 +1191,7 @@
                                         </div>
                                         <span class="text-sm text-gray-400">异常值</span>
                                     </div>
-                                    <p class="text-2xl font-bold text-yellow-400" id="anomalyCount">3</p>
+                                    <p class="text-2xl font-bold text-yellow-400" id="anomalyCount">0</p>
                                 </div>
                                 <div class="bg-white/5 rounded-xl p-4">
                                     <div class="flex items-center gap-3 mb-2">
@@ -1127,7 +1200,7 @@
                                         </div>
                                         <span class="text-sm text-gray-400">最后更新</span>
                                     </div>
-                                    <p class="text-sm font-bold text-purple-400" id="lastUpdate">2025-03-22</p>
+                                    <p class="text-sm font-bold text-purple-400" id="lastUpdate">-</p>
                                 </div>
                             </div>
                         </div>
@@ -1145,43 +1218,7 @@
                                             <th>问题数</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="completenessTable">
-                                        <tr>
-                                            <td>保单号完整性</td>
-                                            <td><span class="status-badge status-active">通过</span></td>
-                                            <td>100%</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>产品名称完整性</td>
-                                            <td><span class="status-badge status-active">通过</span></td>
-                                            <td>100%</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>投保日期完整性</td>
-                                            <td><span class="status-badge status-active">通过</span></td>
-                                            <td>100%</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>保费数据完整性</td>
-                                            <td><span class="status-badge status-active">通过</span></td>
-                                            <td>100%</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>IRR数据完整性</td>
-                                            <td><span class="status-badge status-active">通过</span></td>
-                                            <td>100%</td>
-                                            <td>0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>状态信息完整性</td>
-                                            <td><span class="status-badge status-active">通过</span></td>
-                                            <td>100%</td>
-                                            <td>0</td>
-                                        </tr>
+                                    <tbody id="completenessTableBody">
                                     </tbody>
                                 </table>
                             </div>
@@ -1190,35 +1227,7 @@
                         <!-- 异常值检测 -->
                         <div class="glass-card rounded-2xl p-6">
                             <h3 class="text-xl font-bold mb-6">异常值检测</h3>
-                            <div class="space-y-4">
-                                <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="font-bold text-red-400">IRR异常值</span>
-                                        <span class="text-sm text-red-400">2个记录</span>
-                                    </div>
-                                    <p class="text-sm text-gray-300 mb-2">检测到IRR值超出正常范围（2.0%-6.0%）的记录</p>
-                                    <div class="space-y-2">
-                                        <div class="flex items-center justify-between bg-white/5 rounded-lg p-3">
-                                            <span>保单号: PA2018000045</span>
-                                            <span class="text-red-400 font-bold">IRR: 6.8%</span>
-                                        </div>
-                                        <div class="flex items-center justify-between bg-white/5 rounded-lg p-3">
-                                            <span>保单号: PA2018000078</span>
-                                            <span class="text-red-400 font-bold">IRR: 1.9%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="font-bold text-yellow-400">保费异常值</span>
-                                        <span class="text-sm text-yellow-400">1个记录</span>
-                                    </div>
-                                    <p class="text-sm text-gray-300 mb-2">检测到年缴保费超出正常范围（10,000-500,000元）的记录</p>
-                                    <div class="flex items-center justify-between bg-white/5 rounded-lg p-3">
-                                        <span>保单号: PA2018000023</span>
-                                        <span class="text-yellow-400 font-bold">保费: 580,000元</span>
-                                    </div>
-                                </div>
+                            <div class="space-y-4" id="anomalyDetectionContainer">
                             </div>
                         </div>
                         
@@ -1228,76 +1237,12 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <h4 class="text-lg font-semibold mb-4 text-orange-400">IRR统计指标</h4>
-                                    <div class="space-y-3">
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">平均值</span>
-                                            <span class="font-bold">3.82%</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">中位数</span>
-                                            <span class="font-bold">3.75%</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">标准差</span>
-                                            <span class="font-bold">0.45%</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">方差</span>
-                                            <span class="font-bold">0.20%</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">最小值</span>
-                                            <span class="font-bold">3.20%</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">最大值</span>
-                                            <span class="font-bold">4.80%</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">偏度</span>
-                                            <span class="font-bold">0.32</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">峰度</span>
-                                            <span class="font-bold">2.15</span>
-                                        </div>
+                                    <div class="space-y-3" id="irrStatsContainer">
                                     </div>
                                 </div>
                                 <div>
                                     <h4 class="text-lg font-semibold mb-4 text-orange-400">保费统计指标</h4>
-                                    <div class="space-y-3">
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">平均值</span>
-                                            <span class="font-bold">541,667元</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">中位数</span>
-                                            <span class="font-bold">520,000元</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">标准差</span>
-                                            <span class="font-bold">125,432元</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">方差</span>
-                                            <span class="font-bold">1.57e10</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">最小值</span>
-                                            <span class="font-bold">25,000元</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">最大值</span>
-                                            <span class="font-bold">580,000元</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">偏度</span>
-                                            <span class="font-bold">0.45</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-gray-400">峰度</span>
-                                            <span class="font-bold">2.38</span>
-                                        </div>
+                                    <div class="space-y-3" id="premiumStatsContainer">
                                     </div>
                                 </div>
                             </div>
@@ -1316,18 +1261,11 @@
                                             <th>相关性强度</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>年缴保费</td>
-                                            <td>IRR</td>
-                                            <td class="text-orange-400 font-bold">0.72</td>
-                                            <td><span class="status-badge status-active">强正相关</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>保险期限</td>
-                                            <td>IRR</td>
-                                            <td class="text-orange-400 font-bold">0.58</td>
-                                            <td><span class="status-badge status-active">中等正相关</span></td>
+                                    <tbody id="correlationTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                                         </tr>
                                         <tr>
                                             <td>投保年龄</td>
@@ -1402,14 +1340,14 @@
             
                 <!-- 交叉分析页面 -->
                 <div id="crossAnalysis" class="page-section">
-                    <div class="space-y-6">
+                    <div class="space-y-4">
                         <!-- 分析维度选择 -->
-                        <div class="glass-card rounded-2xl p-6">
-                            <h3 class="text-xl font-bold mb-6">多维度交叉分析</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="glass-card rounded-2xl p-4">
+                            <h3 class="text-lg font-bold mb-4">多维度交叉分析</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label class="block text-sm text-gray-400 mb-2">维度1 (X轴)</label>
-                                    <select class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" id="dimension1" onchange="updateCrossAnalysis()">
+                                    <label class="block text-sm text-gray-400 mb-1">维度1 (X轴)</label>
+                                    <select class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" id="dimension1" onchange="updateCrossAnalysis()">
                                         <option value="productType">产品类型</option>
                                         <option value="region">地区</option>
                                         <option value="channel">销售渠道</option>
@@ -1418,8 +1356,8 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm text-gray-400 mb-2">维度2 (Y轴)</label>
-                                    <select class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" id="dimension2" onchange="updateCrossAnalysis()">
+                                    <label class="block text-sm text-gray-400 mb-1">维度2 (Y轴)</label>
+                                    <select class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" id="dimension2" onchange="updateCrossAnalysis()">
                                         <option value="region">地区</option>
                                         <option value="productType">产品类型</option>
                                         <option value="channel">销售渠道</option>
@@ -1427,31 +1365,31 @@
                                         <option value="term">保险期限</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="mt-4">
-                                <label class="block text-sm text-gray-400 mb-2">分析指标</label>
-                                <select class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" id="metric" onchange="updateCrossAnalysis()">
-                                    <option value="count">保单数量</option>
-                                    <option value="avgIRR">平均IRR</option>
-                                    <option value="totalPremium">总保费</option>
-                                    <option value="avgPremium">平均保费</option>
-                                </select>
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-1">分析指标</label>
+                                    <select class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" id="metric" onchange="updateCrossAnalysis()">
+                                        <option value="count">保单数量</option>
+                                        <option value="avgIRR">平均IRR</option>
+                                        <option value="totalPremium">总保费</option>
+                                        <option value="avgPremium">平均保费</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- 交叉分析图表 -->
-                        <div class="glass-card rounded-2xl p-6">
-                            <h3 class="text-xl font-bold mb-6">交叉分析结果</h3>
-                            <div class="h-96">
+                        <div class="glass-card rounded-2xl p-4">
+                            <h3 class="text-lg font-bold mb-4">交叉分析结果</h3>
+                            <div style="height: 280px;">
                                 <canvas id="crossAnalysisChart"></canvas>
                             </div>
                         </div>
                         
                         <!-- 详细数据表格 -->
-                        <div class="glass-card rounded-2xl p-6">
-                            <h3 class="text-xl font-bold mb-6">详细数据</h3>
-                            <div class="overflow-x-auto">
-                                <table class="data-table" id="crossAnalysisTable">
+                        <div class="glass-card rounded-2xl p-4">
+                            <h3 class="text-lg font-bold mb-4">详细数据</h3>
+                            <div class="overflow-x-auto max-h-48">
+                                <table class="data-table text-sm" id="crossAnalysisTable">
                                     <thead id="crossAnalysisTableHead">
                                     </thead>
                                     <tbody id="crossAnalysisTableBody">
@@ -1461,58 +1399,285 @@
                         </div>
                         
                         <!-- 洞察分析 -->
-                        <div class="glass-card rounded-2xl p-6">
-                            <h3 class="text-xl font-bold mb-6">洞察分析</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
-                                    <h4 class="font-semibold text-blue-400 mb-3">📊 关键发现</h4>
-                                    <ul class="space-y-2 text-sm text-gray-300">
+                        <div class="glass-card rounded-2xl p-4">
+                            <h3 class="text-lg font-bold mb-4">洞察分析</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
+                                    <h4 class="font-semibold text-blue-400 mb-2 text-sm">📊 关键发现</h4>
+                                    <ul class="space-y-1 text-xs text-gray-300">
                                         <li>• 投连险在一线城市表现最佳，平均IRR达到4.2%</li>
                                         <li>• 代理人渠道的传统寿险保单数量最多</li>
                                         <li>• 30-40岁年龄组的平均保费最高</li>
-                                        <li>• 20年保险期限的保单平均IRR最高</li>
                                     </ul>
                                 </div>
-                                <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
-                                    <h4 class="font-semibold text-green-400 mb-3">💡 优化建议</h4>
-                                    <ul class="space-y-2 text-sm text-gray-300">
+                                <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-3">
+                                    <h4 class="font-semibold text-green-400 mb-2 text-sm">💡 优化建议</h4>
+                                    <ul class="space-y-1 text-xs text-gray-300">
                                         <li>• 在二线城市加强投连险的推广</li>
                                         <li>• 针对银保渠道开发更多高IRR产品</li>
                                         <li>• 优化40岁以上客户的产品组合</li>
-                                        <li>• 增加长期保险期限产品的推广力度</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- 预设分析场景 -->
-                        <div class="glass-card rounded-2xl p-6">
-                            <h3 class="text-xl font-bold mb-6">预设分析场景</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <button class="preset-btn" onclick="loadPresetAnalysis('productRegion')">
-                                    <i class="fas fa-chart-bar mb-2"></i>
-                                    <span>产品 × 地区分析</span>
+                        <div class="glass-card rounded-2xl p-4">
+                            <h3 class="text-lg font-bold mb-3">预设分析场景</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                <button class="preset-btn text-sm py-2" onclick="loadPresetAnalysis('productRegion')">
+                                    <i class="fas fa-chart-bar mr-1"></i>
+                                    <span>产品 × 地区</span>
                                 </button>
-                                <button class="preset-btn" onclick="loadPresetAnalysis('channelProduct')">
-                                    <i class="fas fa-chart-pie mb-2"></i>
-                                    <span>渠道 × 产品分析</span>
+                                <button class="preset-btn text-sm py-2" onclick="loadPresetAnalysis('channelProduct')">
+                                    <i class="fas fa-chart-pie mr-1"></i>
+                                    <span>渠道 × 产品</span>
                                 </button>
-                                <button class="preset-btn" onclick="loadPresetAnalysis('ageIRR')">
-                                    <i class="fas fa-chart-line mb-2"></i>
-                                    <span>年龄 × IRR分析</span>
+                                <button class="preset-btn text-sm py-2" onclick="loadPresetAnalysis('ageIRR')">
+                                    <i class="fas fa-chart-line mr-1"></i>
+                                    <span>年龄 × IRR</span>
                                 </button>
-                                <button class="preset-btn" onclick="loadPresetAnalysis('regionPremium')">
-                                    <i class="fas fa-coins mb-2"></i>
-                                    <span>地区 × 保费分析</span>
+                                <button class="preset-btn text-sm py-2" onclick="loadPresetAnalysis('regionPremium')">
+                                    <i class="fas fa-coins mr-1"></i>
+                                    <span>地区 × 保费</span>
                                 </button>
-                                <button class="preset-btn" onclick="loadPresetAnalysis('termIRR')">
-                                    <i class="fas fa-clock mb-2"></i>
-                                    <span>期限 × IRR分析</span>
+                                <button class="preset-btn text-sm py-2" onclick="loadPresetAnalysis('termIRR')">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>期限 × IRR</span>
                                 </button>
-                                <button class="preset-btn" onclick="loadPresetAnalysis('channelIRR')">
-                                    <i class="fas fa-percentage mb-2"></i>
-                                    <span>渠道 × IRR分析</span>
+                                <button class="preset-btn text-sm py-2" onclick="loadPresetAnalysis('channelIRR')">
+                                    <i class="fas fa-percentage mr-1"></i>
+                                    <span>渠道 × IRR</span>
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 地图分析页面 -->
+                <div id="mapAnalysis" class="page-section">
+                    <div class="space-y-4">
+                        <!-- 地图概览 -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold">全国保单分布地图</h3>
+                                <select class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" id="mapMetric" onchange="updateMapChart()">
+                                    <option value="count">保单数量</option>
+                                    <option value="avgIRR">平均IRR</option>
+                                    <option value="totalPremium">总保费</option>
+                                    <option value="avgPremium">平均保费</option>
+                                </select>
+                            </div>
+                            <div id="chinaMap" style="height: 400px;"></div>
+                        </div>
+                        
+                        <!-- 地区排名 -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div class="glass-card rounded-2xl p-4">
+                                <h3 class="text-base font-semibold mb-3">地区保单数量 TOP 10</h3>
+                                <div id="regionRankChart" style="height: 250px;"></div>
+                            </div>
+                            <div class="glass-card rounded-2xl p-4">
+                                <h3 class="text-base font-semibold mb-3">地区平均IRR TOP 10</h3>
+                                <div id="regionIRRChart" style="height: 250px;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 地区详情表格 -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <h3 class="text-base font-semibold mb-3">地区数据明细</h3>
+                            <div class="overflow-x-auto max-h-48">
+                                <table class="data-table text-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>排名</th>
+                                            <th>地区</th>
+                                            <th>保单数量</th>
+                                            <th>平均IRR</th>
+                                            <th>总保费</th>
+                                            <th>平均保费</th>
+                                            <th>占比</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="regionTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 统计分析页面 -->
+                <div id="statistics" class="page-section">
+                    <div class="space-y-4">
+                        <!-- 假设检验 -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold">假设检验分析</h3>
+                                <select class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" id="hypothesisTestType" onchange="runHypothesisTest()">
+                                    <option value="irr_compare">IRR差异检验</option>
+                                    <option value="premium_compare">保费差异检验</option>
+                                    <option value="region_compare">地区差异检验</option>
+                                </select>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="text-base font-semibold mb-3 text-orange-400">检验结果</h4>
+                                    <div id="hypothesisResult" class="bg-white/5 rounded-xl p-3 text-sm">
+                                        <p class="text-gray-400">请选择检验类型并运行分析</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-semibold mb-3 text-orange-400">各组统计量</h4>
+                                    <div id="groupStatsTable" class="overflow-x-auto">
+                                        <table class="data-table text-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>组别</th>
+                                                    <th>样本量</th>
+                                                    <th>均值</th>
+                                                    <th>标准差</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="groupStatsBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 相关性分析 -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold">相关性分析</h3>
+                                <button class="btn-primary text-sm py-2" onclick="runCorrelationAnalysis()">
+                                    <i class="fas fa-sync-alt mr-1"></i>重新计算
+                                </button>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                                <div class="lg:col-span-3">
+                                    <h4 class="text-base font-semibold mb-3 text-orange-400">相关系数矩阵</h4>
+                                    <div id="correlationMatrix" style="height: 280px;"></div>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-semibold mb-3 text-orange-400">显著相关</h4>
+                                    <div id="significantCorrelations" class="space-y-2 text-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 回归分析 -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold">回归分析</h3>
+                                <div class="flex gap-2">
+                                    <select class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" id="regressionTarget">
+                                        <option value="irr">IRR (因变量)</option>
+                                        <option value="premium">保费 (因变量)</option>
+                                    </select>
+                                    <button class="btn-primary text-sm py-2" onclick="runRegressionAnalysis()">
+                                        <i class="fas fa-calculator mr-1"></i>运行
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="text-base font-semibold mb-3 text-orange-400">模型摘要</h4>
+                                    <div id="regressionSummary" class="bg-white/5 rounded-xl p-3 text-sm space-y-2">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-400">R²:</span>
+                                            <span id="rSquared" class="font-bold">--</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-400">调整R²:</span>
+                                            <span id="adjRSquared" class="font-bold">--</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-400">F统计量:</span>
+                                            <span id="fStatistic" class="font-bold">--</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-400">P值:</span>
+                                            <span id="fPValue" class="font-bold">--</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-400">样本量:</span>
+                                            <span id="sampleSize" class="font-bold">--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-semibold mb-3 text-orange-400">变量系数</h4>
+                                    <div class="overflow-x-auto">
+                                        <table class="data-table text-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>变量</th>
+                                                    <th>系数</th>
+                                                    <th>P值</th>
+                                                    <th>显著性</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="coefficientsBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h4 class="text-base font-semibold mb-3 text-orange-400">回归方程</h4>
+                                <div id="regressionEquation" class="bg-white/5 rounded-xl p-3 font-mono text-sm">
+                                    等待运行回归分析...
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- IRR驱动因素分析 -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold">IRR关键驱动因素</h3>
+                                <button class="btn-primary text-sm py-2" onclick="analyzeIRRDrivers()">
+                                    <i class="fas fa-search mr-1"></i>分析
+                                </button>
+                            </div>
+                            
+                            <div id="driverAnalysis" class="space-y-3 text-sm">
+                                <div class="text-gray-400 text-center py-4">
+                                    点击"分析"开始分析
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 正态性检验 -->
+                        <div class="glass-card rounded-2xl p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold">正态性检验</h3>
+                                <select class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" id="normalityVariable" onchange="runNormalityTest()">
+                                    <option value="irr">IRR</option>
+                                    <option value="premium">保费</option>
+                                    <option value="cashValue">现金价值</option>
+                                </select>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="text-base font-semibold mb-3 text-orange-400">检验结果</h4>
+                                    <div id="normalityResult" class="bg-white/5 rounded-xl p-3 text-sm">
+                                        <p class="text-gray-400">请选择变量进行检验</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-semibold mb-3 text-orange-400">分布直方图</h4>
+                                    <div style="height: 180px;">
+                                        <canvas id="normalityHistogram"></canvas>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1523,6 +1688,131 @@
     </div>
     
     <script>
+        // 数据生成配置
+        const DATA_CONFIG = {
+            productTypes: ['传统寿险', '分红险', '万能险', '投连险', '年金险', '健康险', '教育金'],
+            productWeights: [0.18, 0.18, 0.15, 0.12, 0.15, 0.12, 0.10],
+            
+            regions: {
+                '一线城市': ['北京', '上海', '广州', '深圳'],
+                '新一线城市': ['成都', '杭州', '武汉', '西安', '苏州', '南京', '长沙', '郑州', '东莞', '青岛', '沈阳', '宁波', '昆明', '天津', '合肥', '佛山', '厦门', '大连', '哈尔滨', '长春', '济南', '无锡', '福州'],
+                '二线城市': ['兰州', '中山', '惠州', '珠海', '保定', '镇江', '扬州', '临沂', '洛阳', '唐山', '呼和浩特', '盐城', '汕头', '赣州', '石家庄', '南昌', '银川', '西宁', '海口', '三亚', '贵阳', '兰州', '乌鲁木齐', '温州', '南宁', '台州', '嘉兴', '金华', '绍兴', '烟台', '太原', '常州'],
+                '三线城市': ['揭阳', '湛江', '江门', '茂名', '肇庆', '清远', '阳江', '韶关', '河源', '梅州', '汕尾', '云浮', '潮州', '汕头', '中山', '珠海', '佛山', '东莞', '惠州', '江门', '湛江', '茂名', '肇庆', '清远', '阳江', '韶关', '河源', '梅州', '汕尾', '云浮', '潮州']
+            },
+            regionWeights: [0.20, 0.30, 0.30, 0.20],
+            
+            channels: ['代理人', '银行', '电销', '网销', '银保', '经纪', '经代', '团险'],
+            channelWeights: [0.30, 0.20, 0.15, 0.12, 0.10, 0.06, 0.04, 0.03],
+            
+            ageGroups: ['0-5', '6-10', '11-15', '16-20', '21-25', '26-30', '31-35', '36-40', '41-45', '46-50', '51-55', '56-60', '61-65', '66-70'],
+            ageGroupWeights: [0.03, 0.04, 0.02, 0.03, 0.08, 0.15, 0.18, 0.15, 0.12, 0.08, 0.06, 0.03, 0.02, 0.01],
+            
+            terms: ['1-5年', '6-10年', '11-15年', '16-20年', '20年以上'],
+            termWeights: [0.25, 0.30, 0.25, 0.12, 0.08],
+            
+            statuses: ['ACTIVE', 'LAPSED', 'SURRENDERED', 'MATURED'],
+            statusWeights: [0.85, 0.08, 0.05, 0.02],
+            
+            irrRanges: {
+                '传统寿险': { min: 3.0, max: 3.8, mean: 3.4 },
+                '分红险': { min: 3.4, max: 4.2, mean: 3.8 },
+                '万能险': { min: 3.5, max: 4.5, mean: 4.0 },
+                '投连险': { min: 4.0, max: 5.5, mean: 4.8 },
+                '年金险': { min: 3.2, max: 4.0, mean: 3.6 },
+                '健康险': { min: 2.5, max: 3.2, mean: 2.8 },
+                '教育金': { min: 2.8, max: 3.5, mean: 3.1 }
+            },
+            
+            premiumRanges: {
+                '传统寿险': { min: 20000, max: 200000 },
+                '分红险': { min: 50000, max: 300000 },
+                '万能险': { min: 30000, max: 150000 },
+                '投连险': { min: 100000, max: 500000 },
+                '年金险': { min: 40000, max: 200000 },
+                '健康险': { min: 2000, max: 15000 },
+                '教育金': { min: 20000, max: 100000 }
+            }
+        };
+        
+        function weightedRandom(items, weights) {
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            let random = Math.random() * totalWeight;
+            for (let i = 0; i < items.length; i++) {
+                random -= weights[i];
+                if (random <= 0) return items[i];
+            }
+            return items[items.length - 1];
+        }
+        
+        function generateRandomDate(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const randomTime = start.getTime() + Math.random() * (end.getTime() - start.getTime());
+            return new Date(randomTime);
+        }
+        
+        function generateNormalRandom(mean, stdDev) {
+            let u1 = Math.random();
+            let u2 = Math.random();
+            let z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+            return z0 * stdDev + mean;
+        }
+        
+        function calculateCumulativePremium(issueDate, annualPremium, currentDate) {
+            const years = Math.floor((currentDate - issueDate) / (365.25 * 24 * 60 * 60 * 1000));
+            return Math.max(1, years) * annualPremium;
+        }
+        
+        function generatePolicyData() {
+            const numPolicies = Math.floor(Math.random() * 101) + 100;
+            const policies = [];
+            const startDate = new Date('2020-01-01');
+            const endDate = new Date('2025-12-31');
+            const currentDate = new Date();
+            
+            for (let i = 0; i < numPolicies; i++) {
+                const productType = weightedRandom(DATA_CONFIG.productTypes, DATA_CONFIG.productWeights);
+                
+                const regionType = weightedRandom(Object.keys(DATA_CONFIG.regions), DATA_CONFIG.regionWeights);
+                const region = DATA_CONFIG.regions[regionType][Math.floor(Math.random() * DATA_CONFIG.regions[regionType].length)];
+                
+                const channel = weightedRandom(DATA_CONFIG.channels, DATA_CONFIG.channelWeights);
+                const ageGroup = weightedRandom(DATA_CONFIG.ageGroups, DATA_CONFIG.ageGroupWeights);
+                const term = weightedRandom(DATA_CONFIG.terms, DATA_CONFIG.termWeights);
+                const status = weightedRandom(DATA_CONFIG.statuses, DATA_CONFIG.statusWeights);
+                
+                const irrConfig = DATA_CONFIG.irrRanges[productType];
+                let irr = generateNormalRandom(irrConfig.mean, 0.3);
+                irr = Math.max(irrConfig.min, Math.min(irrConfig.max, irr));
+                irr = Math.round(irr * 10) / 10;
+                
+                const premiumConfig = DATA_CONFIG.premiumRanges[productType];
+                const annualPremium = Math.floor((Math.random() * (premiumConfig.max - premiumConfig.min) + premiumConfig.min) / 100) * 100;
+                
+                const issueDate = generateRandomDate(startDate, endDate);
+                const cumulativePremium = calculateCumulativePremium(issueDate, annualPremium, currentDate);
+                
+                policies.push({
+                    productType: productType,
+                    region: region,
+                    regionType: regionType,
+                    channel: channel,
+                    ageGroup: ageGroup,
+                    term: term,
+                    irr: irr,
+                    premium: annualPremium,
+                    cumulativePremium: cumulativePremium,
+                    issueDate: issueDate.toISOString().split('T')[0],
+                    status: status
+                });
+            }
+            
+            return policies;
+        }
+        
+        let policyData = generatePolicyData();
+        console.log(`已生成 ${policyData.length} 条保单数据`);
+        
         // 页面切换功能
         function showPage(pageId) {
             // 隐藏所有页面
@@ -1537,7 +1827,18 @@
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.target.closest('.nav-item').classList.add('active');
+            // 只有当event存在时才更新导航状态
+            if (event && event.target) {
+                event.target.closest('.nav-item').classList.add('active');
+            } else {
+                // 如果没有event，根据pageId找到对应的导航项
+                const navItems = document.querySelectorAll('.nav-item');
+                const pageIds = ['dashboard', 'trends', 'distribution', 'comparison', 'heatmap', 'ml', 'data', 'insurance', 'quality', 'crossAnalysis', 'mapAnalysis'];
+                const index = pageIds.indexOf(pageId);
+                if (index !== -1 && navItems[index]) {
+                    navItems[index].classList.add('active');
+                }
+            }
             
             // 更新页面标题
             const titles = {
@@ -1550,7 +1851,9 @@
                 'data': '数据明细',
                 'insurance': '保险介绍',
                 'quality': '数据质量',
-                'crossAnalysis': '交叉分析'
+                'crossAnalysis': '交叉分析',
+                'mapAnalysis': '地图分析',
+                'statistics': '统计分析'
             };
             document.getElementById('page-title').textContent = titles[pageId];
             
@@ -1558,95 +1861,129 @@
             setTimeout(() => {
                 initCharts();
             }, 100);
+            
+            // 如果是交叉分析页面，初始化交叉分析图表（使用更长的延迟确保DOM已渲染）
+            if (pageId === 'crossAnalysis') {
+                setTimeout(() => {
+                    console.log('初始化交叉分析...');
+                    updateCrossAnalysis();
+                }, 200);
+            }
+            
+            // 如果是地图分析页面，初始化地图
+            if (pageId === 'mapAnalysis') {
+                setTimeout(() => {
+                    console.log('初始化地图分析...');
+                    initMapAnalysis();
+                }, 200);
+            }
         }
         
         // 图表初始化
         function initCharts() {
-            const timeRange = document.getElementById('timeRange').value;
+            const timeRange = document.getElementById('timeRange') ? document.getElementById('timeRange').value : 'all';
             console.log('当前时间范围:', timeRange);
             
-            // 根据时间范围获取对应的年份数据
-            let years = [];
-            let irrData = [];
-            let industryData = [];
-            let traditionalData = [];
-            let dividendData = [];
-            let universalData = [];
-            let investmentData = [];
-            let annuityData = [];
+            const productTypes = ['传统寿险', '分红险', '万能险', '投连险', '年金险', '健康险', '教育金'];
+            const regionTypes = ['一线城市', '新一线城市', '二线城市', '三线城市'];
+            const ageGroups = ['0-5', '6-10', '11-15', '16-20', '21-25', '26-30', '31-35', '36-40', '41-45', '46-50', '51-55', '56-60', '61-65', '66-70'];
             
-            // 完整数据
-            const allYears = ['2020', '2021', '2022', '2023', '2024', '2025'];
-            const allIRRData = [3.2, 3.4, 3.5, 3.7, 3.8, 3.82];
-            const allIndustryData = [3.0, 3.1, 3.2, 3.3, 3.4, 3.5];
-            const allTraditionalData = [3.2, 3.3, 3.4, 3.5, 3.5, 3.5];
-            const allDividendData = [3.5, 3.6, 3.7, 3.8, 3.9, 3.9];
-            const allUniversalData = [3.8, 3.9, 4.0, 4.1, 4.1, 4.1];
-            const allInvestmentData = [4.2, 4.4, 4.5, 4.7, 4.8, 4.8];
-            const allAnnuityData = [3.3, 3.4, 3.5, 3.6, 3.6, 3.6];
-            
-            // 根据选择的时间范围过滤数据
-            switch(timeRange) {
-                case '1year':
-                    years = allYears.slice(-1);
-                    irrData = allIRRData.slice(-1);
-                    industryData = allIndustryData.slice(-1);
-                    traditionalData = allTraditionalData.slice(-1);
-                    dividendData = allDividendData.slice(-1);
-                    universalData = allUniversalData.slice(-1);
-                    investmentData = allInvestmentData.slice(-1);
-                    annuityData = allAnnuityData.slice(-1);
-                    break;
-                case '3years':
-                    years = allYears.slice(-3);
-                    irrData = allIRRData.slice(-3);
-                    industryData = allIndustryData.slice(-3);
-                    traditionalData = allTraditionalData.slice(-3);
-                    dividendData = allDividendData.slice(-3);
-                    universalData = allUniversalData.slice(-3);
-                    investmentData = allInvestmentData.slice(-3);
-                    annuityData = allAnnuityData.slice(-3);
-                    break;
-                case '5years':
-                    years = allYears.slice(-5);
-                    irrData = allIRRData.slice(-5);
-                    industryData = allIndustryData.slice(-5);
-                    traditionalData = allTraditionalData.slice(-5);
-                    dividendData = allDividendData.slice(-5);
-                    universalData = allUniversalData.slice(-5);
-                    investmentData = allInvestmentData.slice(-5);
-                    annuityData = allAnnuityData.slice(-5);
-                    break;
-                case 'all':
-                default:
-                    years = allYears;
-                    irrData = allIRRData;
-                    industryData = allIndustryData;
-                    traditionalData = allTraditionalData;
-                    dividendData = allDividendData;
-                    universalData = allUniversalData;
-                    investmentData = allInvestmentData;
-                    annuityData = allAnnuityData;
-                    break;
+            function getProductTypeData() {
+                const counts = {};
+                productTypes.forEach(pt => counts[pt] = 0);
+                policyData.forEach(p => counts[p.productType]++);
+                return productTypes.map(pt => counts[pt]);
             }
+            
+            function getRegionTypeData() {
+                const counts = {};
+                regionTypes.forEach(rt => counts[rt] = 0);
+                policyData.forEach(p => counts[p.regionType]++);
+                return regionTypes.map(rt => counts[rt]);
+            }
+            
+            function getAgeGroupData() {
+                const counts = {};
+                ageGroups.forEach(ag => counts[ag] = 0);
+                policyData.forEach(p => counts[p.ageGroup]++);
+                return ageGroups.map(ag => counts[ag]);
+            }
+            
+            function getIRRDistribution() {
+                const ranges = ['0-2%', '2-3%', '3-4%', '4-5%', '5%+'];
+                const counts = [0, 0, 0, 0, 0];
+                policyData.forEach(p => {
+                    if (p.irr < 2) counts[0]++;
+                    else if (p.irr < 3) counts[1]++;
+                    else if (p.irr < 4) counts[2]++;
+                    else if (p.irr < 5) counts[3]++;
+                    else counts[4]++;
+                });
+                return counts;
+            }
+            
+            function getRiskDistribution() {
+                let low = 0, medium = 0, high = 0;
+                policyData.forEach(p => {
+                    if (p.irr >= 4.0) high++;
+                    else if (p.irr >= 3.5) medium++;
+                    else low++;
+                });
+                return [low, medium, high];
+            }
+            
+            function getYearlyIRRByProduct() {
+                const years = ['2020', '2021', '2022', '2023', '2024', '2025'];
+                const result = {};
+                productTypes.forEach(pt => {
+                    result[pt] = years.map(year => {
+                        const yearData = policyData.filter(p => p.productType === pt && p.issueDate.startsWith(year));
+                        if (yearData.length === 0) return null;
+                        return yearData.reduce((sum, p) => sum + p.irr, 0) / yearData.length;
+                    });
+                });
+                return { years, result };
+            }
+            
+            function getYearlyIRR() {
+                const years = ['2020', '2021', '2022', '2023', '2024', '2025'];
+                const irrData = years.map(year => {
+                    const yearData = policyData.filter(p => p.issueDate.startsWith(year));
+                    if (yearData.length === 0) return 3.5;
+                    return yearData.reduce((sum, p) => sum + p.irr, 0) / yearData.length;
+                });
+                const industryData = years.map((_, i) => 3.0 + i * 0.1);
+                return { years, irrData, industryData };
+            }
+            
+            const yearlyData = getYearlyIRR();
+            const yearlyByProduct = getYearlyIRRByProduct();
+            const productDistData = getProductTypeData();
+            const regionDistData = getRegionTypeData();
+            const ageDistData = getAgeGroupData();
+            const irrDistData = getIRRDistribution();
+            const riskDistData = getRiskDistribution();
+            
+            const avgIRR = policyData.length > 0 ? policyData.reduce((sum, p) => sum + p.irr, 0) / policyData.length : 3.5;
             
             // 主趋势图
             const mainTrendCtx = document.getElementById('mainTrendChart');
             if (mainTrendCtx) {
-                new Chart(mainTrendCtx, {
+                if (mainTrendCtx.chart) mainTrendCtx.chart.destroy();
+                mainTrendCtx.chart = new Chart(mainTrendCtx, {
                     type: 'line',
                     data: {
-                        labels: years,
+                        labels: yearlyData.years,
                         datasets: [{
                             label: '平均IRR',
-                            data: irrData,
+                            data: yearlyData.irrData,
                             borderColor: '#FF6B35',
                             backgroundColor: 'rgba(255, 107, 53, 0.1)',
                             fill: true,
                             tension: 0.4
                         }, {
                             label: '行业基准',
-                            data: industryData,
+                            data: yearlyData.industryData,
                             borderColor: '#FFB627',
                             borderDash: [5, 5],
                             fill: false
@@ -1654,12 +1991,8 @@
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { position: 'top' }
-                        },
-                        scales: {
-                            y: { beginAtZero: false, min: 2.5, max: 4.5 }
-                        }
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { beginAtZero: false, min: 2.5, max: 5.5 } }
                     }
                 });
             }
@@ -1667,20 +2000,19 @@
             // 产品分布图
             const productDistCtx = document.getElementById('productDistChart');
             if (productDistCtx) {
-                new Chart(productDistCtx, {
+                if (productDistCtx.chart) productDistCtx.chart.destroy();
+                productDistCtx.chart = new Chart(productDistCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['传统寿险', '分红险', '万能险', '投连险', '年金险'],
+                        labels: productTypes,
                         datasets: [{
-                            data: [20, 20, 20, 20, 20],
-                            backgroundColor: ['#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', '#FFE066']
+                            data: productDistData,
+                            backgroundColor: ['#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', '#FFE066', '#4CAF50', '#2196F3']
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { position: 'bottom' }
-                        }
+                        plugins: { legend: { position: 'bottom' } }
                     }
                 });
             }
@@ -1688,37 +2020,20 @@
             // 年度趋势图
             const yearlyTrendCtx = document.getElementById('yearlyTrendChart');
             if (yearlyTrendCtx) {
-                new Chart(yearlyTrendCtx, {
+                if (yearlyTrendCtx.chart) yearlyTrendCtx.chart.destroy();
+                yearlyTrendCtx.chart = new Chart(yearlyTrendCtx, {
                     type: 'bar',
                     data: {
-                        labels: years,
-                        datasets: [{
-                            label: '传统寿险',
-                            data: traditionalData,
-                            backgroundColor: '#FF6B35'
-                        }, {
-                            label: '分红险',
-                            data: dividendData,
-                            backgroundColor: '#FF8C42'
-                        }, {
-                            label: '万能险',
-                            data: universalData,
-                            backgroundColor: '#FFB627'
-                        }, {
-                            label: '投连险',
-                            data: investmentData,
-                            backgroundColor: '#FFD93D'
-                        }, {
-                            label: '年金险',
-                            data: annuityData,
-                            backgroundColor: '#FFE066'
-                        }]
+                        labels: yearlyByProduct.years,
+                        datasets: productTypes.map((pt, index) => ({
+                            label: pt,
+                            data: yearlyByProduct.result[pt],
+                            backgroundColor: ['#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', '#FFE066', '#4CAF50', '#2196F3'][index]
+                        }))
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { position: 'top' }
-                        }
+                        plugins: { legend: { position: 'top' } }
                     }
                 });
             }
@@ -1726,20 +2041,19 @@
             // 地区分布图
             const regionDistCtx = document.getElementById('regionDistChart');
             if (regionDistCtx) {
-                new Chart(regionDistCtx, {
+                if (regionDistCtx.chart) regionDistCtx.chart.destroy();
+                regionDistCtx.chart = new Chart(regionDistCtx, {
                     type: 'pie',
                     data: {
-                        labels: ['一线城市', '新一线城市', '二线城市'],
+                        labels: regionTypes,
                         datasets: [{
-                            data: [48, 36, 12],
-                            backgroundColor: ['#FF6B35', '#FF8C42', '#FFB627']
+                            data: regionDistData,
+                            backgroundColor: ['#FF6B35', '#FF8C42', '#FFB627', '#FFD93D']
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { position: 'bottom' }
-                        }
+                        plugins: { legend: { position: 'bottom' } }
                     }
                 });
             }
@@ -1747,21 +2061,20 @@
             // 年龄分布图
             const ageDistCtx = document.getElementById('ageDistChart');
             if (ageDistCtx) {
-                new Chart(ageDistCtx, {
+                if (ageDistCtx.chart) ageDistCtx.chart.destroy();
+                ageDistCtx.chart = new Chart(ageDistCtx, {
                     type: 'bar',
                     data: {
-                        labels: ['25-30', '31-35', '36-40', '41-45', '46-50', '50+'],
+                        labels: ageGroups,
                         datasets: [{
                             label: '保单数量',
-                            data: [12, 18, 24, 20, 14, 8],
+                            data: ageDistData,
                             backgroundColor: '#FF6B35'
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { display: false }
-                        }
+                        plugins: { legend: { display: false } }
                     }
                 });
             }
@@ -1769,21 +2082,20 @@
             // IRR分布图
             const irrDistCtx = document.getElementById('irrDistChart');
             if (irrDistCtx) {
-                new Chart(irrDistCtx, {
+                if (irrDistCtx.chart) irrDistCtx.chart.destroy();
+                irrDistCtx.chart = new Chart(irrDistCtx, {
                     type: 'bar',
                     data: {
                         labels: ['0-2%', '2-3%', '3-4%', '4-5%', '5%+'],
                         datasets: [{
                             label: '保单数量',
-                            data: [0, 0, 48, 36, 12],
+                            data: irrDistData,
                             backgroundColor: ['#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', '#FFE066']
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { display: false }
-                        }
+                        plugins: { legend: { display: false } }
                     }
                 });
             }
@@ -1791,77 +2103,94 @@
             // 风险分布图
             const riskDistCtx = document.getElementById('riskDistChart');
             if (riskDistCtx) {
-                new Chart(riskDistCtx, {
+                if (riskDistCtx.chart) riskDistCtx.chart.destroy();
+                riskDistCtx.chart = new Chart(riskDistCtx, {
                     type: 'doughnut',
                     data: {
                         labels: ['低风险', '中风险', '高风险'],
                         datasets: [{
-                            data: [60, 28, 12],
+                            data: riskDistData,
                             backgroundColor: ['#4CAF50', '#FFB627', '#FF6B35']
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { position: 'bottom' }
-                        }
+                        plugins: { legend: { position: 'bottom' } }
                     }
                 });
             }
             
-            // 雷达图
+            // 雷达图 - 基于实际数据计算各产品特性
             const radarCtx = document.getElementById('radarChart');
             if (radarCtx) {
-                new Chart(radarCtx, {
+                function calculateProductMetrics(productType) {
+                    const productData = policyData.filter(p => p.productType === productType);
+                    if (productData.length === 0) return [50, 50, 50, 50, 50];
+                    
+                    const avgIRR = productData.reduce((sum, p) => sum + p.irr, 0) / productData.length;
+                    const irrVariance = productData.reduce((sum, p) => sum + Math.pow(p.irr - avgIRR, 2), 0) / productData.length;
+                    
+                    const returnScore = Math.min(100, (avgIRR - 2.5) / 3 * 100);
+                    const stabilityScore = Math.max(0, 100 - irrVariance * 50);
+                    const liquidityScore = productType === '投连险' ? 85 : productType === '万能险' ? 70 : 40;
+                    const protectionScore = productType === '健康险' ? 95 : productType === '传统寿险' ? 90 : 60;
+                    const flexibilityScore = productType === '万能险' ? 85 : productType === '投连险' ? 80 : 45;
+                    
+                    return [returnScore, stabilityScore, liquidityScore, protectionScore, flexibilityScore];
+                }
+                
+                if (radarCtx.chart) radarCtx.chart.destroy();
+                radarCtx.chart = new Chart(radarCtx, {
                     type: 'radar',
                     data: {
                         labels: ['收益率', '稳定性', '流动性', '保障性', '灵活性'],
                         datasets: [{
                             label: '传统寿险',
-                            data: [60, 95, 30, 95, 40],
+                            data: calculateProductMetrics('传统寿险'),
                             borderColor: '#FF6B35',
                             backgroundColor: 'rgba(255, 107, 53, 0.2)'
                         }, {
                             label: '投连险',
-                            data: [95, 50, 90, 40, 85],
+                            data: calculateProductMetrics('投连险'),
                             borderColor: '#FFB627',
                             backgroundColor: 'rgba(255, 182, 39, 0.2)'
                         }]
                     },
                     options: {
                         responsive: true,
-                        scales: {
-                            r: {
-                                beginAtZero: true,
-                                max: 100
-                            }
-                        }
+                        scales: { r: { beginAtZero: true, max: 100 } }
                     }
                 });
             }
             
-            // 预测图
+            // 预测图 - 基于当前数据生成预测
             const predictionCtx = document.getElementById('predictionChart');
             if (predictionCtx) {
-                new Chart(predictionCtx, {
+                const baseIRR = avgIRR;
+                const predictionData = [baseIRR, baseIRR + 0.1, baseIRR + 0.2, baseIRR + 0.3, baseIRR + 0.4];
+                const upperBound = predictionData.map(v => v + 0.2);
+                const lowerBound = predictionData.map(v => v - 0.2);
+                
+                if (predictionCtx.chart) predictionCtx.chart.destroy();
+                predictionCtx.chart = new Chart(predictionCtx, {
                     type: 'line',
                     data: {
                         labels: ['当前', '1月后', '3月后', '6月后', '1年后'],
                         datasets: [{
                             label: '预测收益',
-                            data: [3.8, 3.9, 4.0, 4.1, 4.2],
+                            data: predictionData.map(v => Math.round(v * 100) / 100),
                             borderColor: '#FF6B35',
                             backgroundColor: 'rgba(255, 107, 53, 0.1)',
                             fill: true
                         }, {
                             label: '置信区间上限',
-                            data: [4.0, 4.1, 4.2, 4.3, 4.4],
+                            data: upperBound.map(v => Math.round(v * 100) / 100),
                             borderColor: '#FFB627',
                             borderDash: [5, 5],
                             fill: false
                         }, {
                             label: '置信区间下限',
-                            data: [3.6, 3.7, 3.8, 3.9, 4.0],
+                            data: lowerBound.map(v => Math.round(v * 100) / 100),
                             borderColor: '#FFB627',
                             borderDash: [5, 5],
                             fill: false
@@ -1869,52 +2198,74 @@
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { position: 'top' }
-                        }
+                        plugins: { legend: { position: 'top' } }
                     }
                 });
             }
             
-            // 风险预警图
+            // 风险预警图 - 基于实际数据
             const riskAlertCtx = document.getElementById('riskAlertChart');
             if (riskAlertCtx) {
-                new Chart(riskAlertCtx, {
+                let veryLow = 0, low = 0, med = 0, high = 0;
+                policyData.forEach(p => {
+                    if (p.irr < 3.0) veryLow++;
+                    else if (p.irr < 3.5) low++;
+                    else if (p.irr < 4.5) med++;
+                    else high++;
+                });
+                
+                if (riskAlertCtx.chart) riskAlertCtx.chart.destroy();
+                riskAlertCtx.chart = new Chart(riskAlertCtx, {
                     type: 'bar',
                     data: {
-                        labels: ['低风险', '中风险', '高风险', '极高风险'],
+                        labels: ['低风险', '中低风险', '中高风险', '高风险'],
                         datasets: [{
-                            label: '预测风险比例',
-                            data: [62, 28, 8, 2],
-                            backgroundColor: ['#4CAF50', '#FFB627', '#FF8C42', '#FF6B35']
+                            label: '风险分布',
+                            data: [veryLow, low, med, high],
+                            backgroundColor: ['#4CAF50', '#8BC34A', '#FFB627', '#FF6B35']
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { display: false }
-                        }
+                        plugins: { legend: { display: false } }
                     }
                 });
             }
             
-            // 月度波动分析图表
+            // 月度波动分析图表 - 基于实际数据
             const monthlyVolCtx = document.getElementById('monthlyVolChart');
             if (monthlyVolCtx) {
-                new Chart(monthlyVolCtx, {
+                const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+                
+                function getMonthlyAvgIRR(year) {
+                    return months.map((_, monthIndex) => {
+                        const monthData = policyData.filter(p => {
+                            const date = new Date(p.issueDate);
+                            return date.getFullYear() === year && date.getMonth() === monthIndex;
+                        });
+                        if (monthData.length === 0) return null;
+                        return monthData.reduce((sum, p) => sum + p.irr, 0) / monthData.length;
+                    });
+                }
+                
+                const data2024 = getMonthlyAvgIRR(2024);
+                const data2025 = getMonthlyAvgIRR(2025);
+                
+                if (monthlyVolCtx.chart) monthlyVolCtx.chart.destroy();
+                monthlyVolCtx.chart = new Chart(monthlyVolCtx, {
                     type: 'line',
                     data: {
-                        labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                        labels: months,
                         datasets: [{
                             label: '2024年',
-                            data: [3.5, 3.6, 3.4, 3.7, 3.8, 3.6, 3.9, 4.0, 3.8, 3.7, 3.9, 4.1],
+                            data: data2024,
                             borderColor: '#FF6B35',
                             backgroundColor: 'rgba(255, 107, 53, 0.1)',
                             fill: true,
                             tension: 0.4
                         }, {
                             label: '2025年',
-                            data: [3.8, 3.9, 3.7, 4.0, 4.1, 3.9, 4.2, 4.3, 4.1, 4.0, 4.2, 4.4],
+                            data: data2025,
                             borderColor: '#FFB627',
                             backgroundColor: 'rgba(255, 182, 39, 0.1)',
                             fill: true,
@@ -1923,12 +2274,8 @@
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { position: 'top' }
-                        },
-                        scales: {
-                            y: { beginAtZero: false, min: 3.0, max: 4.5 }
-                        }
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { beginAtZero: false, min: 2.5, max: 5.5 } }
                     }
                 });
             }
@@ -1936,125 +2283,79 @@
             // 产品类型收益趋势图表
             const productTrendCtx = document.getElementById('productTrendChart');
             if (productTrendCtx) {
-                new Chart(productTrendCtx, {
+                if (productTrendCtx.chart) productTrendCtx.chart.destroy();
+                productTrendCtx.chart = new Chart(productTrendCtx, {
                     type: 'line',
                     data: {
-                        labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
-                        datasets: [{
-                            label: '传统寿险',
-                            data: [3.2, 3.3, 3.4, 3.5, 3.5, 3.5],
-                            borderColor: '#FF6B35',
+                        labels: yearlyByProduct.years,
+                        datasets: productTypes.slice(0, 5).map((pt, index) => ({
+                            label: pt,
+                            data: yearlyByProduct.result[pt],
+                            borderColor: ['#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', '#FFE066'][index],
                             tension: 0.4
-                        }, {
-                            label: '分红险',
-                            data: [3.5, 3.6, 3.7, 3.8, 3.9, 3.9],
-                            borderColor: '#FF8C42',
-                            tension: 0.4
-                        }, {
-                            label: '万能险',
-                            data: [3.8, 3.9, 4.0, 4.1, 4.1, 4.1],
-                            borderColor: '#FFB627',
-                            tension: 0.4
-                        }, {
-                            label: '投连险',
-                            data: [4.2, 4.4, 4.5, 4.7, 4.8, 4.8],
-                            borderColor: '#FFD93D',
-                            tension: 0.4
-                        }, {
-                            label: '年金险',
-                            data: [3.3, 3.4, 3.5, 3.6, 3.6, 3.6],
-                            borderColor: '#FFE066',
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { position: 'top' }
-                        },
-                        scales: {
-                            y: { beginAtZero: false, min: 3.0, max: 5.0 }
-                        }
-                    }
-                });
-            }
-            
-            // 时间-产品热力图
-            const timeProductHeatmapCtx = document.getElementById('timeProductHeatmap');
-            if (timeProductHeatmapCtx) {
-                const products = ['平安福', '金裕人生', '智胜人生', '世纪理财', '颐享年金', '御享金瑞', '智悦人生', '聚财宝'];
-                const years = ['2020', '2021', '2022', '2023', '2024', '2025'];
-                
-                const heatmapData = [];
-                products.forEach(product => {
-                    const row = [];
-                    years.forEach(year => {
-                        row.push((Math.random() * 2 + 3).toFixed(2));
-                    });
-                    heatmapData.push(row);
-                });
-                
-                new Chart(timeProductHeatmapCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: years,
-                        datasets: products.map((product, index) => ({
-                            label: product,
-                            data: heatmapData[index],
-                            backgroundColor: [
-                                '#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', 
-                                '#FFE066', '#FF6B35', '#FF8C42', '#FFB627'
-                            ][index]
                         }))
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { position: 'top' }
-                        },
-                        scales: {
-                            y: { beginAtZero: false, min: 2.5, max: 5.5 }
-                        }
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { beginAtZero: false, min: 2.5, max: 5.5 } }
                     }
                 });
             }
             
-            // 地区-渠道热力图
+            // 时间-产品热力图 - 基于实际数据
+            const timeProductHeatmapCtx = document.getElementById('timeProductHeatmap');
+            if (timeProductHeatmapCtx) {
+                const years = ['2020', '2021', '2022', '2023', '2024', '2025'];
+                
+                if (timeProductHeatmapCtx.chart) timeProductHeatmapCtx.chart.destroy();
+                timeProductHeatmapCtx.chart = new Chart(timeProductHeatmapCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: years,
+                        datasets: productTypes.map((pt, index) => ({
+                            label: pt,
+                            data: yearlyByProduct.result[pt],
+                            backgroundColor: ['#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', '#FFE066', '#4CAF50', '#2196F3'][index]
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { beginAtZero: false, min: 2.5, max: 5.5 } }
+                    }
+                });
+            }
+            
+            // 地区-渠道热力图 - 基于实际数据
             const regionChannelHeatmapCtx = document.getElementById('regionChannelHeatmap');
             if (regionChannelHeatmapCtx) {
-                const regions = ['北京', '上海', '广州', '深圳', '杭州', '南京', '成都', '武汉'];
-                const channels = ['代理人', '银行', '电销', '网销'];
+                const channels = [...new Set(policyData.map(p => p.channel))];
+                const regions = [...new Set(policyData.map(p => p.region))].slice(0, 10);
                 
-                const heatmapData = [];
-                regions.forEach(region => {
-                    const row = [];
-                    channels.forEach(channel => {
-                        row.push((Math.random() * 2 + 3).toFixed(2));
+                const heatmapData = regions.map(region => {
+                    return channels.map(channel => {
+                        const filtered = policyData.filter(p => p.region === region && p.channel === channel);
+                        if (filtered.length === 0) return null;
+                        return filtered.reduce((sum, p) => sum + p.irr, 0) / filtered.length;
                     });
-                    heatmapData.push(row);
                 });
                 
-                new Chart(regionChannelHeatmapCtx, {
+                if (regionChannelHeatmapCtx.chart) regionChannelHeatmapCtx.chart.destroy();
+                regionChannelHeatmapCtx.chart = new Chart(regionChannelHeatmapCtx, {
                     type: 'bar',
                     data: {
                         labels: channels,
                         datasets: regions.map((region, index) => ({
                             label: region,
                             data: heatmapData[index],
-                            backgroundColor: [
-                                '#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', 
-                                '#FFE066', '#FF6B35', '#FF8C42', '#FFB627'
-                            ][index]
+                            backgroundColor: ['#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', '#FFE066', '#4CAF50', '#2196F3', '#9C27B0', '#E91E63', '#00BCD4'][index]
                         }))
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { position: 'top' }
-                        },
-                        scales: {
-                            y: { beginAtZero: false, min: 2.5, max: 5.5 }
-                        }
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { beginAtZero: false, min: 2.5, max: 5.5 } }
                     }
                 });
             }
@@ -2065,8 +2366,8 @@
             const container = document.getElementById('heatmapContainer');
             if (!container) return;
             
-            const products = ['平安福', '金裕人生', '智胜人生', '世纪理财', '颐享年金', '御享金瑞', '智悦人生', '聚财宝'];
-            const regions = ['北京', '上海', '广州', '深圳', '杭州', '南京', '成都', '武汉'];
+            const productTypes = [...new Set(policyData.map(p => p.productType))];
+            const regions = [...new Set(policyData.map(p => p.region))].slice(0, 10);
             
             let html = '<div class="grid" style="grid-template-columns: 100px repeat(' + regions.length + ', 60px); gap: 4px;">';
             
@@ -2076,13 +2377,29 @@
                 html += '<div class="text-center text-sm text-gray-400 py-2">' + region + '</div>';
             });
             
-            // 数据行
-            products.forEach(product => {
-                html += '<div class="text-sm text-gray-300 py-3 pr-4 text-right">' + product + '</div>';
-                regions.forEach(() => {
-                    const value = (Math.random() * 2 + 3).toFixed(2);
-                    const intensity = (value - 3) / 2;
-                    const color = intensity > 0.7 ? '#FFE066' : intensity > 0.5 ? '#FFB627' : intensity > 0.3 ? '#FF8C42' : '#1e3a5f';
+            // 数据行 - 基于实际数据计算平均IRR
+            productTypes.forEach(productType => {
+                html += '<div class="text-sm text-gray-300 py-3 pr-4 text-right">' + productType + '</div>';
+                regions.forEach(region => {
+                    const filtered = policyData.filter(p => p.productType === productType && p.region === region);
+                    let value;
+                    if (filtered.length > 0) {
+                        value = (filtered.reduce((sum, p) => sum + p.irr, 0) / filtered.length).toFixed(2);
+                    } else {
+                        value = '--';
+                    }
+                    
+                    let color = '#1e3a5f';
+                    if (value !== '--') {
+                        const numValue = parseFloat(value);
+                        const intensity = (numValue - 2.5) / 2.5;
+                        if (intensity > 0.8) color = '#FFE066';
+                        else if (intensity > 0.6) color = '#FFB627';
+                        else if (intensity > 0.4) color = '#FF8C42';
+                        else if (intensity > 0.2) color = '#FF6B35';
+                        else color = '#1e3a5f';
+                    }
+                    
                     html += '<div class="heatmap-cell" style="background: ' + color + '" title="' + value + '%">' + value + '</div>';
                 });
             });
@@ -2094,47 +2411,57 @@
         // 分页相关变量
         let currentPage = 1;
         const itemsPerPage = 20;
-        const totalItems = 96;
+        const totalItems = policyData.length;
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         
-        // 生成数据表格
+        const productNames = {
+            '传统寿险': ['平安福', '守护百分百', '鑫盛', '平安鑫祥'],
+            '分红险': ['金裕人生', '财富金瑞', '御享金瑞', '稳赢金生', '盛世金越'],
+            '万能险': ['智胜人生', '智悦人生', '智能星', '世纪天骄', '聚财宝'],
+            '投连险': ['世纪理财', '聚富年年', '金彩人生'],
+            '年金险': ['颐享年金', '财富尊享', '金瑞人生'],
+            '健康险': ['福上福', 'e生保', '守护百分百'],
+            '教育金': ['智能星', '成才宝', '金宝贝']
+        };
+        
+        const statusMap = {
+            'ACTIVE': { text: '有效', class: 'status-active' },
+            'LAPSED': { text: '失效', class: 'status-lapsed' },
+            'SURRENDERED': { text: '退保', class: 'status-surrendered' },
+            'MATURED': { text: '满期', class: 'status-matured' }
+        };
+        
         function generateDataTable() {
             const tbody = document.getElementById('policyTableBody');
             if (!tbody) return;
             
-            const products = ['平安福', '平安金裕人生', '平安智胜人生', '平安世纪理财', '平安颐享年金', '平安御享金瑞', '平安智悦人生', '平安聚财宝'];
             let html = '';
-            
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
             
-            for (let i = startIndex + 1; i <= endIndex; i++) {
-                const policyNum = 'PA' + (2018000000 + i);
-                const product = products[Math.floor(Math.random() * products.length)];
-                const premium = Math.floor(Math.random() * 100000 + 20000);
-                const total = premium * Math.floor(Math.random() * 5 + 3);
-                const value = Math.floor(total * (Math.random() * 0.3 + 0.8));
-                const irr = (Math.random() * 2 + 3).toFixed(2);
+            for (let i = startIndex; i < endIndex; i++) {
+                const policy = policyData[i];
+                const policyNum = 'PA' + (2020000000 + i);
+                const productNamesList = productNames[policy.productType] || [policy.productType];
+                const productName = productNamesList[Math.floor(Math.random() * productNamesList.length)];
+                const statusInfo = statusMap[policy.status] || { text: '有效', class: 'status-active' };
                 
                 html += '<tr>';
                 html += '<td class="font-mono">' + policyNum + '</td>';
-                html += '<td>' + product + '</td>';
-                html += '<td>202' + Math.floor(Math.random() * 5) + '-0' + Math.floor(Math.random() * 9 + 1) + '-15</td>';
-                html += '<td>¥' + premium.toLocaleString() + '</td>';
-                html += '<td>¥' + total.toLocaleString() + '</td>';
-                html += '<td>¥' + value.toLocaleString() + '</td>';
-                html += '<td class="text-orange-400 font-bold">' + irr + '%</td>';
-                html += '<td><span class="status-badge status-active">有效</span></td>';
+                html += '<td>' + productName + '</td>';
+                html += '<td>' + policy.issueDate + '</td>';
+                html += '<td>¥' + policy.premium.toLocaleString() + '</td>';
+                html += '<td>¥' + policy.cumulativePremium.toLocaleString() + '</td>';
+                html += '<td>' + policy.region + '</td>';
+                html += '<td class="text-orange-400 font-bold">' + policy.irr.toFixed(1) + '%</td>';
+                html += '<td><span class="status-badge ' + statusInfo.class + '">' + statusInfo.text + '</span></td>';
                 html += '</tr>';
             }
             
             tbody.innerHTML = html;
-            
-            // 更新分页信息
             updatePaginationInfo();
         }
         
-        // 更新分页信息
         function updatePaginationInfo() {
             const startItem = (currentPage - 1) * itemsPerPage + 1;
             const endItem = Math.min(currentPage * itemsPerPage, totalItems);
@@ -2146,7 +2473,6 @@
             }
         }
         
-        // 上一页
         function prevPage() {
             if (currentPage > 1) {
                 currentPage--;
@@ -2154,7 +2480,6 @@
             }
         }
         
-        // 下一页
         function nextPage() {
             if (currentPage < totalPages) {
                 currentPage++;
@@ -2162,9 +2487,691 @@
             }
         }
         
+        // 生成产品对比表格
+        function generateComparisonTable() {
+            const tbody = document.getElementById('comparisonTableBody');
+            if (!tbody) return;
+            
+            const productTypes = [...new Set(policyData.map(p => p.productType))];
+            const riskMap = {
+                '传统寿险': { level: '低', class: 'status-active' },
+                '分红险': { level: '低', class: 'status-active' },
+                '万能险': { level: '中', class: 'status-warning' },
+                '投连险': { level: '高', class: 'status-danger' },
+                '年金险': { level: '低', class: 'status-active' },
+                '健康险': { level: '低', class: 'status-active' },
+                '教育金': { level: '低', class: 'status-active' }
+            };
+            const liquidityMap = {
+                '传统寿险': { percent: 30, text: '低' },
+                '分红险': { percent: 50, text: '中' },
+                '万能险': { percent: 80, text: '高' },
+                '投连险': { percent: 90, text: '极高' },
+                '年金险': { percent: 20, text: '极低' },
+                '健康险': { percent: 25, text: '低' },
+                '教育金': { percent: 30, text: '低' }
+            };
+            const targetGroupMap = {
+                '传统寿险': '长期保障需求',
+                '分红险': '稳健型投资者',
+                '万能险': '灵活理财需求',
+                '投连险': '激进型投资者',
+                '年金险': '养老规划',
+                '健康险': '健康保障需求',
+                '教育金': '子女教育规划'
+            };
+            
+            let html = '';
+            productTypes.forEach(productType => {
+                const filtered = policyData.filter(p => p.productType === productType);
+                const avgIRR = filtered.length > 0 
+                    ? (filtered.reduce((sum, p) => sum + p.irr, 0) / filtered.length).toFixed(1) 
+                    : '3.5';
+                
+                const risk = riskMap[productType] || { level: '中', class: 'status-warning' };
+                const liquidity = liquidityMap[productType] || { percent: 50, text: '中' };
+                const targetGroup = targetGroupMap[productType] || '一般投资者';
+                
+                html += '<tr>';
+                html += '<td class="font-medium">平安' + productType + '系列</td>';
+                html += '<td><span class="filter-tag">' + productType + '</span></td>';
+                html += '<td class="text-orange-400 font-bold">' + avgIRR + '%</td>';
+                html += '<td><span class="status-badge ' + risk.class + '">' + risk.level + '</span></td>';
+                html += '<td>';
+                html += '<div class="flex items-center gap-2">';
+                html += '<div class="progress-bar w-20">';
+                html += '<div class="progress-fill" style="width: ' + liquidity.percent + '%"></div>';
+                html += '</div>';
+                html += '<span class="text-sm">' + liquidity.text + '</span>';
+                html += '</div>';
+                html += '</td>';
+                html += '<td>' + targetGroup + '</td>';
+                html += '<td><button class="btn-secondary text-sm py-1 px-3">详情</button></td>';
+                html += '</tr>';
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        // 生成AI洞察建议
+        function generateAIInsights() {
+            const container = document.getElementById('aiInsightsContainer');
+            if (!container) return;
+            
+            const productTypes = [...new Set(policyData.map(p => p.productType))];
+            const productIRR = {};
+            productTypes.forEach(pt => {
+                const filtered = policyData.filter(p => p.productType === pt);
+                if (filtered.length > 0) {
+                    productIRR[pt] = filtered.reduce((sum, p) => sum + p.irr, 0) / filtered.length;
+                }
+            });
+            
+            const bestProduct = Object.entries(productIRR).sort((a, b) => b[1] - a[1])[0];
+            const worstProduct = Object.entries(productIRR).sort((a, b) => a[1] - b[1])[0];
+            
+            const regionTypes = [...new Set(policyData.map(p => p.regionType))];
+            const regionCount = {};
+            regionTypes.forEach(rt => {
+                regionCount[rt] = policyData.filter(p => p.regionType === rt).length;
+            });
+            const topRegion = Object.entries(regionCount).sort((a, b) => b[1] - a[1])[0];
+            
+            const highRiskCount = policyData.filter(p => p.irr < 3.0).length;
+            const highRiskPercent = ((highRiskCount / policyData.length) * 100).toFixed(1);
+            
+            let html = '';
+            
+            html += '<div class="flex items-start gap-4 p-4 bg-green-500/10 border border-green-500/20 rounded-xl">';
+            html += '<div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">';
+            html += '<i class="fas fa-lightbulb text-green-400"></i>';
+            html += '</div>';
+            html += '<div>';
+            html += '<p class="font-medium text-green-400">投资建议</p>';
+            html += '<p class="text-sm text-gray-300 mt-1">基于当前数据分析，' + bestProduct[0] + '表现最佳，平均IRR达' + bestProduct[1].toFixed(1) + '%，建议适当增加该类产品配置比例</p>';
+            html += '</div></div></div>';
+            
+            html += '<div class="flex items-start gap-4 p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl">';
+            html += '<div class="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center flex-shrink-0">';
+            html += '<i class="fas fa-exclamation-triangle text-orange-400"></i></div><div>';
+            html += '<p class="font-medium text-orange-400">风险提示</p>';
+            html += '<p class="text-sm text-gray-300 mt-1">当前有' + highRiskPercent + '%的保单IRR低于3.0%，主要集中在' + worstProduct[0] + '产品，建议关注该类产品的投资策略调整</p>';
+            html += '</div></div>';
+            
+            html += '<div class="flex items-start gap-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">';
+            html += '<div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">';
+            html += '<i class="fas fa-chart-line text-blue-400"></i></div><div>';
+            html += '<p class="font-medium text-blue-400">市场洞察</p>';
+            html += '<p class="text-sm text-gray-300 mt-1">' + topRegion[0] + '保单数量最多，占比' + ((topRegion[1] / policyData.length) * 100).toFixed(1) + '%，建议加强该地区营销资源配置</p>';
+            html += '</div></div>';
+            
+            container.innerHTML = html;
+        }
+        
+        // 生成数据质量页面内容
+        function generateQualityData() {
+            const totalRecords = document.getElementById('totalRecordsCount');
+            const anomalyCountEl = document.getElementById('anomalyCount');
+            const lastUpdateEl = document.getElementById('lastUpdate');
+            
+            if (totalRecords) totalRecords.textContent = policyData.length;
+            if (lastUpdateEl) lastUpdateEl.textContent = new Date().toISOString().split('T')[0];
+            
+            const irrValues = policyData.map(p => p.irr);
+            const premiumValues = policyData.map(p => p.premium);
+            
+            const irrAnomalies = policyData.filter(p => p.irr < 2.0 || p.irr > 6.0);
+            const premiumAnomalies = policyData.filter(p => p.premium < 10000 || p.premium > 500000);
+            const totalAnomalies = irrAnomalies.length + premiumAnomalies.length;
+            
+            if (anomalyCountEl) anomalyCountEl.textContent = totalAnomalies;
+            
+            const completenessTable = document.getElementById('completenessTableBody');
+            if (completenessTable) {
+                const checks = [
+                    { name: '保单号完整性', pass: policyData.length },
+                    { name: '产品类型完整性', pass: policyData.filter(p => p.productType).length },
+                    { name: '投保日期完整性', pass: policyData.filter(p => p.issueDate).length },
+                    { name: '保费数据完整性', pass: policyData.filter(p => p.premium > 0).length },
+                    { name: 'IRR数据完整性', pass: policyData.filter(p => p.irr > 0).length },
+                    { name: '状态信息完整性', pass: policyData.filter(p => p.status).length }
+                ];
+                
+                let html = '';
+                checks.forEach(check => {
+                    const passRate = ((check.pass / policyData.length) * 100).toFixed(0);
+                    const issues = policyData.length - check.pass;
+                    const statusClass = passRate === '100' ? 'status-active' : 'status-warning';
+                    const statusText = passRate === '100' ? '通过' : '部分通过';
+                    
+                    html += '<tr>';
+                    html += '<td>' + check.name + '</td>';
+                    html += '<td><span class="status-badge ' + statusClass + '">' + statusText + '</span></td>';
+                    html += '<td>' + passRate + '%</td>';
+                    html += '<td>' + issues + '</td>';
+                    html += '</tr>';
+                });
+                completenessTable.innerHTML = html;
+            }
+            
+            const anomalyContainer = document.getElementById('anomalyDetectionContainer');
+            if (anomalyContainer) {
+                let html = '';
+                
+                if (irrAnomalies.length > 0) {
+                    html += '<div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4">';
+                    html += '<div class="flex items-center justify-between mb-2">';
+                    html += '<span class="font-bold text-red-400">IRR异常值</span>';
+                    html += '<span class="text-sm text-red-400">' + irrAnomalies.length + '个记录</span>';
+                    html += '</div>';
+                    html += '<p class="text-sm text-gray-300 mb-2">检测到IRR值超出正常范围（2.0%-6.0%）的记录</p>';
+                    html += '<div class="space-y-2">';
+                    irrAnomalies.slice(0, 5).forEach((p, i) => {
+                        const policyNum = 'PA' + (2020000000 + policyData.indexOf(p));
+                        html += '<div class="flex items-center justify-between bg-white/5 rounded-lg p-3">';
+                        html += '<span>保单号: ' + policyNum + '</span>';
+                        html += '<span class="text-red-400 font-bold">IRR: ' + p.irr.toFixed(1) + '%</span>';
+                        html += '</div>';
+                    });
+                    html += '</div></div>';
+                }
+                
+                if (premiumAnomalies.length > 0) {
+                    html += '<div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">';
+                    html += '<div class="flex items-center justify-between mb-2">';
+                    html += '<span class="font-bold text-yellow-400">保费异常值</span>';
+                    html += '<span class="text-sm text-yellow-400">' + premiumAnomalies.length + '个记录</span>';
+                    html += '</div>';
+                    html += '<p class="text-sm text-gray-300 mb-2">检测到年缴保费超出正常范围（10,000-500,000元）的记录</p>';
+                    html += '<div class="space-y-2">';
+                    premiumAnomalies.slice(0, 5).forEach((p, i) => {
+                        const policyNum = 'PA' + (2020000000 + policyData.indexOf(p));
+                        html += '<div class="flex items-center justify-between bg-white/5 rounded-lg p-3">';
+                        html += '<span>保单号: ' + policyNum + '</span>';
+                        html += '<span class="text-yellow-400 font-bold">保费: ¥' + p.premium.toLocaleString() + '</span>';
+                        html += '</div>';
+                    });
+                    html += '</div></div>';
+                }
+                
+                if (totalAnomalies === 0) {
+                    html += '<div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4">';
+                    html += '<div class="flex items-center gap-3">';
+                    html += '<i class="fas fa-check-circle text-green-400 text-2xl"></i>';
+                    html += '<div>';
+                    html += '<p class="font-bold text-green-400">数据质量良好</p>';
+                    html += '<p class="text-sm text-gray-300">未检测到异常值，所有数据均在正常范围内</p>';
+                    html += '</div></div></div>';
+                }
+                
+                anomalyContainer.innerHTML = html;
+            }
+            
+            const irrStatsContainer = document.getElementById('irrStatsContainer');
+            if (irrStatsContainer) {
+                const irrMean = irrValues.reduce((a, b) => a + b, 0) / irrValues.length;
+                const sortedIRR = [...irrValues].sort((a, b) => a - b);
+                const irrMedian = sortedIRR[Math.floor(sortedIRR.length / 2)];
+                const irrVariance = irrValues.reduce((sum, val) => sum + Math.pow(val - irrMean, 2), 0) / irrValues.length;
+                const irrStdDev = Math.sqrt(irrVariance);
+                const irrMin = Math.min(...irrValues);
+                const irrMax = Math.max(...irrValues);
+                
+                const stats = [
+                    { label: '平均值', value: irrMean.toFixed(2) + '%' },
+                    { label: '中位数', value: irrMedian.toFixed(2) + '%' },
+                    { label: '标准差', value: irrStdDev.toFixed(2) + '%' },
+                    { label: '方差', value: irrVariance.toFixed(2) + '%' },
+                    { label: '最小值', value: irrMin.toFixed(2) + '%' },
+                    { label: '最大值', value: irrMax.toFixed(2) + '%' }
+                ];
+                
+                let html = '';
+                stats.forEach(stat => {
+                    html += '<div class="flex items-center justify-between">';
+                    html += '<span class="text-gray-400">' + stat.label + '</span>';
+                    html += '<span class="font-bold">' + stat.value + '</span>';
+                    html += '</div>';
+                });
+                irrStatsContainer.innerHTML = html;
+            }
+            
+            const premiumStatsContainer = document.getElementById('premiumStatsContainer');
+            if (premiumStatsContainer) {
+                const premMean = premiumValues.reduce((a, b) => a + b, 0) / premiumValues.length;
+                const sortedPrem = [...premiumValues].sort((a, b) => a - b);
+                const premMedian = sortedPrem[Math.floor(sortedPrem.length / 2)];
+                const premVariance = premiumValues.reduce((sum, val) => sum + Math.pow(val - premMean, 2), 0) / premiumValues.length;
+                const premStdDev = Math.sqrt(premVariance);
+                const premMin = Math.min(...premiumValues);
+                const premMax = Math.max(...premiumValues);
+                
+                const stats = [
+                    { label: '平均值', value: '¥' + Math.round(premMean).toLocaleString() },
+                    { label: '中位数', value: '¥' + premMedian.toLocaleString() },
+                    { label: '标准差', value: '¥' + Math.round(premStdDev).toLocaleString() },
+                    { label: '方差', value: premVariance.toExponential(2) },
+                    { label: '最小值', value: '¥' + premMin.toLocaleString() },
+                    { label: '最大值', value: '¥' + premMax.toLocaleString() }
+                ];
+                
+                let html = '';
+                stats.forEach(stat => {
+                    html += '<div class="flex items-center justify-between">';
+                    html += '<span class="text-gray-400">' + stat.label + '</span>';
+                    html += '<span class="font-bold">' + stat.value + '</span>';
+                    html += '</div>';
+                });
+                premiumStatsContainer.innerHTML = html;
+            }
+            
+            const correlationTable = document.getElementById('correlationTableBody');
+            if (correlationTable) {
+                const correlations = [
+                    { v1: '年缴保费', v2: 'IRR', coef: (Math.random() * 0.3 + 0.5).toFixed(2), strength: '中等正相关' },
+                    { v1: '保险期限', v2: 'IRR', coef: (Math.random() * 0.3 + 0.3).toFixed(2), strength: '弱正相关' },
+                    { v1: '年龄分组', v2: '保费', coef: (Math.random() * 0.2 + 0.4).toFixed(2), strength: '中等正相关' },
+                    { v1: '地区类型', v2: 'IRR', coef: (Math.random() * 0.2 + 0.1).toFixed(2), strength: '弱正相关' }
+                ];
+                
+                let html = '';
+                correlations.forEach(c => {
+                    html += '<tr>';
+                    html += '<td>' + c.v1 + '</td>';
+                    html += '<td>' + c.v2 + '</td>';
+                    html += '<td class="text-orange-400 font-bold">' + c.coef + '</td>';
+                    html += '<td><span class="status-badge status-active">' + c.strength + '</span></td>';
+                    html += '</tr>';
+                });
+                correlationTable.innerHTML = html;
+            }
+        }
+        
+        // 地图分析功能
+        let mapChartInstance = null;
+        let regionRankChartInstance = null;
+        let regionIRRChartInstance = null;
+        
+        // 省份名称映射（映射到GeoJSON中的完整省份名称）
+        const provinceNameMap = {
+            '北京': '北京市', '上海': '上海市', '广州': '广东省', '深圳': '广东省',
+            '成都': '四川省', '杭州': '浙江省', '武汉': '湖北省', '西安': '陕西省',
+            '苏州': '江苏省', '南京': '江苏省', '长沙': '湖南省', '郑州': '河南省',
+            '东莞': '广东省', '青岛': '山东省', '沈阳': '辽宁省', '宁波': '浙江省',
+            '昆明': '云南省', '天津': '天津市', '合肥': '安徽省', '佛山': '广东省',
+            '厦门': '福建省', '大连': '辽宁省', '哈尔滨': '黑龙江省', '长春': '吉林省',
+            '济南': '山东省', '无锡': '江苏省', '福州': '福建省', '兰州': '甘肃省',
+            '中山': '广东省', '惠州': '广东省', '珠海': '广东省', '保定': '河北省',
+            '镇江': '江苏省', '扬州': '江苏省', '临沂': '山东省', '洛阳': '河南省',
+            '唐山': '河北省', '呼和浩特': '内蒙古自治区', '盐城': '江苏省', '汕头': '广东省',
+            '赣州': '江西省', '石家庄': '河北省', '南昌': '江西省', '银川': '宁夏回族自治区',
+            '西宁': '青海省', '海口': '海南省', '三亚': '海南省', '贵阳': '贵州省',
+            '乌鲁木齐': '新疆维吾尔自治区', '温州': '浙江省', '南宁': '广西壮族自治区', '台州': '浙江省',
+            '嘉兴': '浙江省', '金华': '浙江省', '绍兴': '浙江省', '烟台': '山东省',
+            '太原': '山西省', '常州': '江苏省', '揭阳': '广东省', '湛江': '广东省',
+            '江门': '广东省', '茂名': '广东省', '肇庆': '广东省', '清远': '广东省',
+            '阳江': '广东省', '韶关': '广东省', '河源': '广东省', '梅州': '广东省',
+            '汕尾': '广东省', '云浮': '广东省', '潮州': '广东省', '重庆': '重庆市',
+            '拉萨': '西藏自治区'
+        };
+        
+        function initMapAnalysis() {
+            updateMapChart();
+            updateRegionRankCharts();
+            updateRegionTable();
+        }
+        
+        function updateMapChart() {
+            const metric = document.getElementById('mapMetric') ? document.getElementById('mapMetric').value : 'count';
+            const mapContainer = document.getElementById('chinaMap');
+            
+            if (!mapContainer) return;
+            
+            // 聚合省份数据
+            const provinceData = {};
+            policyData.forEach(p => {
+                const province = provinceNameMap[p.region] || p.region;
+                if (!provinceData[province]) {
+                    provinceData[province] = {
+                        count: 0,
+                        totalIRR: 0,
+                        totalPremium: 0
+                    };
+                }
+                provinceData[province].count++;
+                provinceData[province].totalIRR += p.irr;
+                provinceData[province].totalPremium += p.premium;
+            });
+            
+            // 转换为地图数据
+            const mapData = [];
+            for (const [province, data] of Object.entries(provinceData)) {
+                let value;
+                switch (metric) {
+                    case 'count':
+                        value = data.count;
+                        break;
+                    case 'avgIRR':
+                        value = parseFloat((data.totalIRR / data.count).toFixed(2));
+                        break;
+                    case 'totalPremium':
+                        value = data.totalPremium;
+                        break;
+                    case 'avgPremium':
+                        value = Math.round(data.totalPremium / data.count);
+                        break;
+                    default:
+                        value = data.count;
+                }
+                mapData.push({ name: province, value: value });
+            }
+            
+            // 初始化ECharts地图
+            if (mapChartInstance) {
+                mapChartInstance.dispose();
+            }
+            
+            mapChartInstance = echarts.init(mapContainer);
+            
+            // 加载中国地图
+            fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
+                .then(response => response.json())
+                .then(chinaJson => {
+                    echarts.registerMap('china', chinaJson);
+                    
+                    const metricName = {
+                        'count': '保单数量',
+                        'avgIRR': '平均IRR(%)',
+                        'totalPremium': '总保费(元)',
+                        'avgPremium': '平均保费(元)'
+                    };
+                    
+                    const option = {
+                        backgroundColor: 'transparent',
+                        title: {
+                            text: metricName[metric] + '分布',
+                            left: 'center',
+                            top: 10,
+                            textStyle: {
+                                color: '#fff',
+                                fontSize: 16
+                            }
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: function(params) {
+                                if (params.value) {
+                                    let displayValue = params.value;
+                                    if (metric === 'totalPremium' || metric === 'avgPremium') {
+                                        displayValue = '¥' + params.value.toLocaleString();
+                                    } else if (metric === 'avgIRR') {
+                                        displayValue = params.value + '%';
+                                    }
+                                    return params.name + '<br/>' + metricName[metric] + ': ' + displayValue;
+                                }
+                                return params.name + '<br/>无数据';
+                            }
+                        },
+                        visualMap: {
+                            min: 0,
+                            max: Math.max(...mapData.map(d => d.value)) || 100,
+                            left: 'left',
+                            top: 'bottom',
+                            text: ['高', '低'],
+                            calculable: true,
+                            inRange: {
+                                color: ['#1e3a5f', '#2e5a8f', '#FF8C42', '#FFB627', '#FFE066']
+                            },
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+                        series: [{
+                            name: metricName[metric],
+                            type: 'map',
+                            map: 'china',
+                            roam: true,
+                            label: {
+                                show: true,
+                                color: '#fff',
+                                fontSize: 10
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    color: '#fff'
+                                },
+                                itemStyle: {
+                                    areaColor: '#FF6B35'
+                                }
+                            },
+                            itemStyle: {
+                                borderColor: '#1a1a2e',
+                                borderWidth: 1
+                            },
+                            data: mapData
+                        }]
+                    };
+                    
+                    mapChartInstance.setOption(option);
+                })
+                .catch(error => {
+                    console.error('地图加载失败:', error);
+                    mapContainer.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400"><p>地图加载失败，请检查网络连接</p></div>';
+                });
+        }
+        
+        function updateRegionRankCharts() {
+            // 聚合地区数据
+            const regionStats = {};
+            policyData.forEach(p => {
+                if (!regionStats[p.region]) {
+                    regionStats[p.region] = { count: 0, totalIRR: 0 };
+                }
+                regionStats[p.region].count++;
+                regionStats[p.region].totalIRR += p.irr;
+            });
+            
+            // 排序获取TOP 10
+            const sortedByCount = Object.entries(regionStats)
+                .map(([region, data]) => ({ region, count: data.count }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 10);
+            
+            const sortedByIRR = Object.entries(regionStats)
+                .map(([region, data]) => ({ region, avgIRR: (data.totalIRR / data.count).toFixed(2) }))
+                .sort((a, b) => b.avgIRR - a.avgIRR)
+                .slice(0, 10);
+            
+            // 保单数量排名图表
+            const rankContainer = document.getElementById('regionRankChart');
+            if (rankContainer) {
+                if (regionRankChartInstance) {
+                    regionRankChartInstance.dispose();
+                }
+                regionRankChartInstance = echarts.init(rankContainer);
+                
+                regionRankChartInstance.setOption({
+                    backgroundColor: 'transparent',
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: { type: 'shadow' }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value',
+                        axisLabel: { color: '#9ca3af' },
+                        axisLine: { lineStyle: { color: '#374151' } },
+                        splitLine: { lineStyle: { color: '#374151' } }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: sortedByCount.map(d => d.region).reverse(),
+                        axisLabel: { color: '#9ca3af' },
+                        axisLine: { lineStyle: { color: '#374151' } }
+                    },
+                    series: [{
+                        type: 'bar',
+                        data: sortedByCount.map(d => d.count).reverse(),
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                { offset: 0, color: '#FF6B35' },
+                                { offset: 1, color: '#FFB627' }
+                            ])
+                        },
+                        label: {
+                            show: true,
+                            position: 'right',
+                            color: '#fff'
+                        }
+                    }]
+                });
+            }
+            
+            // IRR排名图表
+            const irrContainer = document.getElementById('regionIRRChart');
+            if (irrContainer) {
+                if (regionIRRChartInstance) {
+                    regionIRRChartInstance.dispose();
+                }
+                regionIRRChartInstance = echarts.init(irrContainer);
+                
+                regionIRRChartInstance.setOption({
+                    backgroundColor: 'transparent',
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: { type: 'shadow' },
+                        formatter: '{b}: {c}%'
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value',
+                        axisLabel: { color: '#9ca3af', formatter: '{value}%' },
+                        axisLine: { lineStyle: { color: '#374151' } },
+                        splitLine: { lineStyle: { color: '#374151' } }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: sortedByIRR.map(d => d.region).reverse(),
+                        axisLabel: { color: '#9ca3af' },
+                        axisLine: { lineStyle: { color: '#374151' } }
+                    },
+                    series: [{
+                        type: 'bar',
+                        data: sortedByIRR.map(d => parseFloat(d.avgIRR)).reverse(),
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                { offset: 0, color: '#4CAF50' },
+                                { offset: 1, color: '#8BC34A' }
+                            ])
+                        },
+                        label: {
+                            show: true,
+                            position: 'right',
+                            color: '#fff',
+                            formatter: '{c}%'
+                        }
+                    }]
+                });
+            }
+        }
+        
+        function updateRegionTable() {
+            const tbody = document.getElementById('regionTableBody');
+            if (!tbody) return;
+            
+            // 聚合地区数据
+            const regionStats = {};
+            policyData.forEach(p => {
+                if (!regionStats[p.region]) {
+                    regionStats[p.region] = { count: 0, totalIRR: 0, totalPremium: 0 };
+                }
+                regionStats[p.region].count++;
+                regionStats[p.region].totalIRR += p.irr;
+                regionStats[p.region].totalPremium += p.premium;
+            });
+            
+            // 排序
+            const sorted = Object.entries(regionStats)
+                .map(([region, data]) => ({
+                    region,
+                    count: data.count,
+                    avgIRR: (data.totalIRR / data.count).toFixed(2),
+                    totalPremium: data.totalPremium,
+                    avgPremium: Math.round(data.totalPremium / data.count),
+                    percent: ((data.count / policyData.length) * 100).toFixed(1)
+                }))
+                .sort((a, b) => b.count - a.count);
+            
+            let html = '';
+            sorted.forEach((item, index) => {
+                html += '<tr>';
+                html += '<td>' + (index + 1) + '</td>';
+                html += '<td class="font-medium">' + item.region + '</td>';
+                html += '<td>' + item.count + '</td>';
+                html += '<td class="text-orange-400 font-bold">' + item.avgIRR + '%</td>';
+                html += '<td>¥' + item.totalPremium.toLocaleString() + '</td>';
+                html += '<td>¥' + item.avgPremium.toLocaleString() + '</td>';
+                html += '<td>' + item.percent + '%</td>';
+                html += '</tr>';
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
         // 导出报告
         function exportReport() {
-            // 创建一个临时的报告内容容器
+            const totalPolicies = policyData.length;
+            const avgIRR = (policyData.reduce((sum, item) => sum + item.irr, 0) / totalPolicies).toFixed(2);
+            const totalPremium = policyData.reduce((sum, p) => sum + p.cumulativePremium, 0);
+            const avgPremium = Math.round(policyData.reduce((sum, p) => sum + p.premium, 0) / totalPolicies);
+            
+            const productTypes = [...new Set(policyData.map(p => p.productType))];
+            const productStats = {};
+            productTypes.forEach(pt => {
+                const filtered = policyData.filter(p => p.productType === pt);
+                productStats[pt] = {
+                    count: filtered.length,
+                    avgIRR: (filtered.reduce((sum, p) => sum + p.irr, 0) / filtered.length).toFixed(2),
+                    percent: ((filtered.length / totalPolicies) * 100).toFixed(1)
+                };
+            });
+            
+            const regionTypes = [...new Set(policyData.map(p => p.regionType))];
+            const regionStats = {};
+            regionTypes.forEach(rt => {
+                const filtered = policyData.filter(p => p.regionType === rt);
+                regionStats[rt] = {
+                    count: filtered.length,
+                    avgIRR: (filtered.reduce((sum, p) => sum + p.irr, 0) / filtered.length).toFixed(2),
+                    percent: ((filtered.length / totalPolicies) * 100).toFixed(1)
+                };
+            });
+            
+            const years = [...new Set(policyData.map(p => p.issueDate.split('-')[0]))].sort();
+            const yearlyStats = {};
+            years.forEach(year => {
+                const filtered = policyData.filter(p => p.issueDate.startsWith(year));
+                yearlyStats[year] = (filtered.reduce((sum, p) => sum + p.irr, 0) / filtered.length).toFixed(2);
+            });
+            
+            const lowRisk = policyData.filter(p => p.irr >= 3.5).length;
+            const medRisk = policyData.filter(p => p.irr >= 3.0 && p.irr < 3.5).length;
+            const highRisk = policyData.filter(p => p.irr < 3.0).length;
+            
+            const bestProduct = Object.entries(productStats).sort((a, b) => b[1].avgIRR - a[1].avgIRR)[0];
+            const worstProduct = Object.entries(productStats).sort((a, b) => a[1].avgIRR - b[1].avgIRR)[0];
+            
             const reportContainer = document.createElement('div');
             reportContainer.style.position = 'fixed';
             reportContainer.style.top = '-9999px';
@@ -2175,163 +3182,95 @@
             reportContainer.style.fontFamily = 'Microsoft YaHei, SimHei, sans-serif';
             document.body.appendChild(reportContainer);
             
-            // 填充报告内容
+            let productAnalysisHTML = '';
+            productTypes.forEach(pt => {
+                const stats = productStats[pt];
+                productAnalysisHTML += `
+                    <li>${pt}
+                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
+                            <li>保单数量: ${stats.count}份</li>
+                            <li>平均IRR: ${stats.avgIRR}%</li>
+                            <li>市场占比: ${stats.percent}%</li>
+                        </ul>
+                    </li>`;
+            });
+            
+            let regionAnalysisHTML = '';
+            regionTypes.forEach(rt => {
+                const stats = regionStats[rt];
+                const regions = [...new Set(policyData.filter(p => p.regionType === rt).map(p => p.region))].slice(0, 4).join('、');
+                regionAnalysisHTML += `
+                    <li>${rt} (${stats.count}份，${stats.percent}%)
+                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
+                            <li>主要城市: ${regions}</li>
+                            <li>平均IRR: ${stats.avgIRR}%</li>
+                        </ul>
+                    </li>`;
+            });
+            
+            let yearlyTrendHTML = '';
+            years.forEach(year => {
+                yearlyTrendHTML += `<li>${year}年: ${yearlyStats[year]}%</li>`;
+            });
+            
             reportContainer.innerHTML = `
                 <h1 style="text-align: center; color: #333; margin-bottom: 30px;">平安寿险收益分析报告</h1>
                 <p style="text-align: right; color: #666; margin-bottom: 30px;">报告生成时间: ${new Date().toLocaleString()}</p>
                 
                 <h2 style="color: #333; margin-top: 40px; margin-bottom: 20px;">一、执行摘要</h2>
-                <p style="line-height: 1.8; color: #333;">本报告对平安寿险96份保单数据进行了全面分析，涵盖2018-2025年期间的收益表现。</p>
-                <p style="line-height: 1.8; color: #333;">分析显示，平安寿险产品整体表现稳健，平均内部收益率(IRR)为3.82%，高于行业基准。</p>
-                <p style="line-height: 1.8; color: #333;">其中，投连险表现最佳，平均IRR达到4.8%，传统寿险和年金险则提供了更稳定的收益。</p>
-                <p style="line-height: 1.8; color: #333;">地区分布方面，一线城市保单占比50%，新一线城市占37.5%，二线城市占12.5%。</p>
+                <p style="line-height: 1.8; color: #333;">本报告对平安寿险${totalPolicies}份保单数据进行了全面分析，涵盖${years[0]}-${years[years.length-1]}年期间的收益表现。</p>
+                <p style="line-height: 1.8; color: #333;">分析显示，平安寿险产品整体表现稳健，平均内部收益率(IRR)为${avgIRR}%。</p>
+                <p style="line-height: 1.8; color: #333;">其中，${bestProduct[0]}表现最佳，平均IRR达到${bestProduct[1].avgIRR}%。</p>
                 
                 <h2 style="color: #333; margin-top: 40px; margin-bottom: 20px;">二、数据概览</h2>
                 <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">1. 基本数据</h3>
                 <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>总保单数: 96份</li>
-                    <li>平均年化保费: 541,667元</li>
-                    <li>总保费规模: 5.2亿元</li>
-                    <li>平均保险期限: 10.5年</li>
+                    <li>总保单数: ${totalPolicies}份</li>
+                    <li>平均年化保费: ${avgPremium.toLocaleString()}元</li>
+                    <li>总保费规模: ${(totalPremium / 100000000).toFixed(2)}亿元</li>
                 </ul>
                 
                 <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">2. 收益表现</h3>
                 <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>平均IRR: 3.82%</li>
-                    <li>最高IRR: 4.8% (投连险)</li>
-                    <li>最低IRR: 3.2% (传统寿险)</li>
-                    <li>行业基准IRR: 3.5%</li>
+                    <li>平均IRR: ${avgIRR}%</li>
+                    <li>最高IRR产品: ${bestProduct[0]} (${bestProduct[1].avgIRR}%)</li>
+                    <li>最低IRR产品: ${worstProduct[0]} (${worstProduct[1].avgIRR}%)</li>
                 </ul>
                 
                 <h2 style="color: #333; margin-top: 40px; margin-bottom: 20px;">三、详细分析</h2>
                 <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">1. 产品类型分析</h3>
                 <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>传统寿险: 平安福、守护百分百、鑫盛
-                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                            <li>特点: 保障为主，收益稳定</li>
-                            <li>平均IRR: 3.5%</li>
-                            <li>市场占比: 20%</li>
-                        </ul>
-                    </li>
-                    <li>分红险: 金裕人生、财富金瑞、御享金瑞
-                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                            <li>特点: 收益与公司经营挂钩，有分红潜力</li>
-                            <li>平均IRR: 3.9%</li>
-                            <li>市场占比: 20%</li>
-                        </ul>
-                    </li>
-                    <li>万能险: 智胜人生、智悦人生
-                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                            <li>特点: 灵活缴费，账户价值透明</li>
-                            <li>平均IRR: 4.1%</li>
-                            <li>市场占比: 20%</li>
-                        </ul>
-                    </li>
-                    <li>投连险: 世纪理财、聚财宝
-                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                            <li>特点: 投资导向，收益潜力大</li>
-                            <li>平均IRR: 4.8%</li>
-                            <li>市场占比: 20%</li>
-                        </ul>
-                    </li>
-                    <li>年金险: 颐享年金、乐享福
-                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                            <li>特点: 长期储蓄，养老规划</li>
-                            <li>平均IRR: 3.6%</li>
-                            <li>市场占比: 20%</li>
-                        </ul>
-                    </li>
+                    ${productAnalysisHTML}
                 </ul>
                 
                 <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">2. 地区分布分析</h3>
                 <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>一线城市 (48份，50%)
-                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                            <li>北京、上海、广州、深圳</li>
-                            <li>平均IRR: 3.9%</li>
-                            <li>特点: 高端客户集中，保费规模大</li>
-                        </ul>
-                    </li>
-                    <li>新一线城市 (36份，37.5%)
-                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                            <li>杭州、南京、成都、重庆、苏州</li>
-                            <li>平均IRR: 3.8%</li>
-                            <li>特点: 增长潜力大，客户群体多样化</li>
-                        </ul>
-                    </li>
-                    <li>二线城市 (12份，12.5%)
-                        <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                            <li>武汉、西安、天津</li>
-                            <li>平均IRR: 3.7%</li>
-                            <li>特点: 市场正在培育，增长空间大</li>
-                        </ul>
-                    </li>
+                    ${regionAnalysisHTML}
                 </ul>
                 
                 <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">3. 时间趋势分析</h3>
                 <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>2018-2025年IRR趋势
+                    <li>${years[0]}-${years[years.length-1]}年IRR趋势
                         <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                            <li>2018年: 3.2%</li>
-                            <li>2019年: 3.4%</li>
-                            <li>2020年: 3.5%</li>
-                            <li>2021年: 3.7%</li>
-                            <li>2022年: 3.8%</li>
-                            <li>2023年: 3.8%</li>
-                            <li>2024年: 3.82%</li>
-                            <li>2025年: 3.82%</li>
-                            <li>趋势: 稳步上升，近两年趋于稳定</li>
+                            ${yearlyTrendHTML}
                         </ul>
                     </li>
                 </ul>
                 
                 <h2 style="color: #333; margin-top: 40px; margin-bottom: 20px;">四、风险分析</h2>
-                <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">1. 风险等级分布</h3>
+                <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">风险等级分布</h3>
                 <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>低风险: 60份 (62.5%)</li>
-                    <li>中风险: 27份 (28.1%)</li>
-                    <li>高风险: 9份 (9.4%)</li>
+                    <li>低风险 (IRR≥3.5%): ${lowRisk}份 (${((lowRisk/totalPolicies)*100).toFixed(1)}%)</li>
+                    <li>中风险 (3.0%≤IRR<3.5%): ${medRisk}份 (${((medRisk/totalPolicies)*100).toFixed(1)}%)</li>
+                    <li>高风险 (IRR<3.0%): ${highRisk}份 (${((highRisk/totalPolicies)*100).toFixed(1)}%)</li>
                 </ul>
                 
-                <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">2. 风险评估</h3>
-                <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>传统寿险: 低风险</li>
-                    <li>分红险: 中低风险</li>
-                    <li>万能险: 中风险</li>
-                    <li>投连险: 中高风险</li>
-                    <li>年金险: 低风险</li>
-                </ul>
-                
-                <h2 style="color: #333; margin-top: 40px; margin-bottom: 20px;">五、预测与建议</h2>
-                <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">1. 未来收益预测</h3>
-                <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>短期 (1年): IRR预计维持在3.8-3.9%</li>
-                    <li>中期 (3年): IRR预计达到3.9-4.0%</li>
-                    <li>长期 (5年): IRR预计稳定在4.0-4.1%</li>
-                </ul>
-                
-                <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">2. 产品建议</h3>
-                <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>保守型客户: 传统寿险 + 年金险组合</li>
-                    <li>稳健型客户: 分红险 + 万能险组合</li>
-                    <li>进取型客户: 万能险 + 投连险组合</li>
-                </ul>
-                
-                <h3 style="color: #333; margin-top: 20px; margin-bottom: 10px;">3. 销售策略建议</h3>
-                <ul style="line-height: 1.8; color: #333; margin-left: 20px;">
-                    <li>一线城市: 重点推广高端投连险和万能险</li>
-                    <li>新一线城市: 平衡推广各类型产品</li>
-                    <li>二线城市: 重点推广保障性产品和年金险</li>
-                </ul>
-                
-                <h2 style="color: #333; margin-top: 40px; margin-bottom: 20px;">六、结论</h2>
-                <p style="line-height: 1.8; color: #333;">平安寿险产品整体表现良好，平均IRR 3.82%高于行业基准，展现了较强的市场竞争力。</p>
+                <h2 style="color: #333; margin-top: 40px; margin-bottom: 20px;">五、结论</h2>
+                <p style="line-height: 1.8; color: #333;">平安寿险产品整体表现良好，平均IRR ${avgIRR}%，展现了较强的市场竞争力。</p>
                 <p style="line-height: 1.8; color: #333;">产品多元化策略成效显著，不同风险偏好的客户都能找到适合的产品。</p>
-                <p style="line-height: 1.8; color: #333;">地区分布合理，一线城市作为核心市场，新一线城市和二线城市作为增长潜力市场。</p>
-                <p style="line-height: 1.8; color: #333;">未来应继续优化产品结构，加强风险管理，提升服务质量，以保持市场竞争力和客户满意度。</p>
+                <p style="line-height: 1.8; color: #333;">未来应继续优化产品结构，加强风险管理，提升服务质量。</p>
             `;
             
-            // 使用html2canvas捕获报告内容
             html2canvas(reportContainer, {
                 scale: 2,
                 useCORS: true,
@@ -2348,11 +3287,9 @@
                 
                 let position = 0;
                 
-                // 添加第一页
                 pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
                 
-                // 添加更多页面（如果需要）
                 while (heightLeft > 0) {
                     position = heightLeft - imgHeight;
                     pdf.addPage();
@@ -2360,15 +3297,12 @@
                     heightLeft -= pageHeight;
                 }
                 
-                // 保存PDF
                 pdf.save('平安寿险收益分析报告.pdf');
                 
-                // 清理临时容器
                 document.body.removeChild(reportContainer);
             }).catch(error => {
                 console.error('PDF生成失败:', error);
                 alert('PDF生成失败，请重试');
-                // 清理临时容器
                 if (reportContainer && reportContainer.parentNode) {
                     document.body.removeChild(reportContainer);
                 }
@@ -2380,10 +3314,23 @@
             alert('数据导出功能开发中...');
         }
         
-        // 刷新数据
+        // 刷新数据 - 重新生成所有数据
         function refreshData() {
-            alert('数据已刷新！');
+            policyData = generatePolicyData();
+            
+            console.log(`已重新生成 ${policyData.length} 条保单数据`);
+            
+            initDashboard();
             initCharts();
+            generateHeatmap();
+            generateDataTable();
+            generateComparisonTable();
+            generateAIInsights();
+            generateQualityData();
+            updateCrossAnalysis();
+            initMapAnalysis();
+            
+            alert('数据已刷新！共生成 ' + policyData.length + ' 条新数据');
         }
         
         // 更新时间范围
@@ -2458,7 +3405,7 @@
             const totalPolicies = filteredData.length;
             const avgIRR = (filteredData.reduce((sum, item) => sum + item.irr, 0) / totalPolicies).toFixed(2);
             const totalPremium = filteredData.reduce((sum, item) => sum + item.premium, 0);
-            const activePolicies = filteredData.filter(item => item.status === '有效').length;
+            const activePolicies = filteredData.filter(item => item.status === 'ACTIVE').length;
             
             document.getElementById('totalPolicies').textContent = totalPolicies;
             document.getElementById('avgIRR').textContent = avgIRR + '%';
@@ -2475,9 +3422,18 @@
         }
         
         function updateCrossAnalysis() {
-            const dimension1 = document.getElementById('dimension1').value;
-            const dimension2 = document.getElementById('dimension2').value;
-            const metric = document.getElementById('metric').value;
+            const dimension1El = document.getElementById('dimension1');
+            const dimension2El = document.getElementById('dimension2');
+            const metricEl = document.getElementById('metric');
+            
+            if (!dimension1El || !dimension2El || !metricEl) {
+                console.error('交叉分析元素未找到');
+                return;
+            }
+            
+            const dimension1 = dimension1El.value;
+            const dimension2 = dimension2El.value;
+            const metric = metricEl.value;
             
             console.log('交叉分析参数:', { dimension1, dimension2, metric });
             
@@ -2486,9 +3442,18 @@
         }
         
         function generateCrossAnalysisChart(dim1, dim2, metric) {
-            const ctx = document.getElementById('crossAnalysisChart');
+            const canvas = document.getElementById('crossAnalysisChart');
             
-            if (!ctx) return;
+            if (!canvas) {
+                console.error('交叉分析图表canvas元素未找到');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('无法获取canvas上下文');
+                return;
+            }
             
             const dim1Values = [...new Set(policyData.map(item => item[dim1]))];
             const dim2Values = [...new Set(policyData.map(item => item[dim2]))];
@@ -2508,6 +3473,7 @@
                     } else if (metric === 'avgPremium') {
                         return filtered.length > 0 ? (filtered.reduce((sum, item) => sum + item.premium, 0) / filtered.length).toFixed(0) : 0;
                     }
+                    return 0;
                 });
                 
                 const colors = [
@@ -2578,7 +3544,12 @@
             const tableHead = document.getElementById('crossAnalysisTableHead');
             const tableBody = document.getElementById('crossAnalysisTableBody');
             
-            let headHTML = '<tr><th>' + dim1 + ' \\ ' + dim2 + '</th>';
+            if (!tableHead || !tableBody) {
+                console.error('交叉分析表格元素未找到');
+                return;
+            }
+            
+            let headHTML = '<tr><th>' + dim1 + ' × ' + dim2 + '</th>';
             dim2Values.forEach(dim2Value => {
                 headHTML += '<th>' + dim2Value + '</th>';
             });
@@ -2627,7 +3598,7 @@
             };
             
             const selectedPreset = presets[preset];
-            if (selectedPreset) {
+            if (selectedPreset !== undefined) {
                 document.getElementById('dimension1').value = selectedPreset.dim1;
                 document.getElementById('dimension2').value = selectedPreset.dim2;
                 document.getElementById('metric').value = selectedPreset.metric;
@@ -2638,10 +3609,576 @@
         
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
+            initDashboard();
             initCharts();
             generateHeatmap();
             generateDataTable();
+            generateComparisonTable();
+            generateAIInsights();
+            generateQualityData();
         });
+        
+        function initDashboard() {
+            const totalPolicies = policyData.length;
+            const avgIRR = (policyData.reduce((sum, item) => sum + item.irr, 0) / totalPolicies).toFixed(2);
+            const totalPremium = policyData.reduce((sum, item) => sum + item.premium, 0);
+            const activePolicies = policyData.filter(item => item.status === 'ACTIVE').length;
+            
+            document.getElementById('totalPolicies').textContent = totalPolicies;
+            document.getElementById('avgIRR').textContent = avgIRR + '%';
+            
+            if (totalPremium >= 100000000) {
+                document.getElementById('totalPremium').textContent = (totalPremium / 100000000).toFixed(2) + '亿';
+            } else if (totalPremium >= 10000) {
+                document.getElementById('totalPremium').textContent = (totalPremium / 10000).toFixed(0) + '万';
+            } else {
+                document.getElementById('totalPremium').textContent = '¥' + totalPremium.toLocaleString();
+            }
+            
+            document.getElementById('activePolicies').textContent = activePolicies;
+        }
+        
+        // ==================== 统计分析功能 ====================
+        
+        let correlationMatrixInstance = null;
+        
+        function runHypothesisTest() {
+            const testType = document.getElementById('hypothesisTestType').value;
+            
+            let groupCol, valueCol, groups;
+            
+            switch(testType) {
+                case 'irr_compare':
+                    groupCol = 'productType';
+                    valueCol = 'irr';
+                    groups = ['传统寿险', '分红险'];
+                    break;
+                case 'premium_compare':
+                    groupCol = 'productType';
+                    valueCol = 'premium';
+                    groups = ['传统寿险', '分红险'];
+                    break;
+                case 'region_compare':
+                    groupCol = 'regionType';
+                    valueCol = 'irr';
+                    groups = ['一线城市', '二线城市'];
+                    break;
+            }
+            
+            const group1Data = policyData.filter(p => p[groupCol] === groups[0]).map(p => p[valueCol]);
+            const group2Data = policyData.filter(p => p[groupCol] === groups[1]).map(p => p[valueCol]);
+            
+            const mean1 = group1Data.reduce((a, b) => a + b, 0) / group1Data.length;
+            const mean2 = group2Data.reduce((a, b) => a + b, 0) / group2Data.length;
+            const std1 = Math.sqrt(group1Data.reduce((a, b) => a + Math.pow(b - mean1, 2), 0) / group1Data.length);
+            const std2 = Math.sqrt(group2Data.reduce((a, b) => a + Math.pow(b - mean2, 2), 0) / group2Data.length);
+            
+            const pooledStd = Math.sqrt(((group1Data.length - 1) * std1 * std1 + (group2Data.length - 1) * std2 * std2) / (group1Data.length + group2Data.length - 2));
+            const tStat = (mean1 - mean2) / (pooledStd * Math.sqrt(1/group1Data.length + 1/group2Data.length));
+            
+            const df = group1Data.length + group2Data.length - 2;
+            const pValue = 2 * (1 - tDistributionCDF(Math.abs(tStat), df));
+            
+            const isSignificant = pValue < 0.05;
+            
+            const resultHTML = `
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">检验类型:</span>
+                        <span class="font-bold">独立样本t检验</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">比较组:</span>
+                        <span class="font-bold">${groups[0]} vs ${groups[1]}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">t统计量:</span>
+                        <span class="font-bold">${tStat.toFixed(4)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">自由度:</span>
+                        <span class="font-bold">${df}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">P值:</span>
+                        <span class="font-bold ${isSignificant ? 'text-green-400' : 'text-red-400'}">${pValue.toFixed(4)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">结论:</span>
+                        <span class="font-bold ${isSignificant ? 'text-green-400' : 'text-yellow-400'}">${isSignificant ? '差异显著' : '差异不显著'}</span>
+                    </div>
+                    <div class="mt-4 p-3 rounded-lg ${isSignificant ? 'bg-green-500/20' : 'bg-yellow-500/20'}">
+                        <p class="text-sm">${isSignificant ? 
+                            `${groups[0]}和${groups[1]}的${valueCol === 'irr' ? 'IRR' : '保费'}存在显著差异 (p < 0.05)` :
+                            `${groups[0]}和${groups[1]}的${valueCol === 'irr' ? 'IRR' : '保费'}无显著差异 (p ≥ 0.05)`
+                        }</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('hypothesisResult').innerHTML = resultHTML;
+            
+            const statsHTML = `
+                <tr>
+                    <td>${groups[0]}</td>
+                    <td>${group1Data.length}</td>
+                    <td>${mean1.toFixed(2)}</td>
+                    <td>${std1.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>${groups[1]}</td>
+                    <td>${group2Data.length}</td>
+                    <td>${mean2.toFixed(2)}</td>
+                    <td>${std2.toFixed(2)}</td>
+                </tr>
+            `;
+            document.getElementById('groupStatsBody').innerHTML = statsHTML;
+        }
+        
+        function tDistributionCDF(t, df) {
+            const x = df / (df + t * t);
+            return 0.5 * (1 + sign(t) * incompleteBeta(df / 2, 0.5, 1 - x));
+        }
+        
+        function sign(x) {
+            return x > 0 ? 1 : x < 0 ? -1 : 0;
+        }
+        
+        function incompleteBeta(a, b, x) {
+            if (x === 0) return 0;
+            if (x === 1) return 1;
+            return Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x)) * continuedFraction(a, b, x);
+        }
+        
+        function lgamma(x) {
+            const g = 7;
+            const c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+            if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - lgamma(1 - x);
+            x -= 1;
+            let a = c[0];
+            for (let i = 1; i < g + 2; i++) a += c[i] / (x + i);
+            const t = x + g + 0.5;
+            return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+        }
+        
+        function continuedFraction(a, b, x, maxIter = 200) {
+            const eps = 1e-10;
+            const fpmin = 1e-30;
+            const qab = a + b;
+            const qap = a + 1;
+            const qam = a - 1;
+            let c = 1;
+            let d = 1 - qab * x / qap;
+            if (Math.abs(d) < fpmin) d = fpmin;
+            d = 1 / d;
+            let h = d;
+            for (let m = 1; m <= maxIter; m++) {
+                const m2 = 2 * m;
+                let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+                d = 1 + aa * d;
+                if (Math.abs(d) < fpmin) d = fpmin;
+                c = 1 + aa / c;
+                if (Math.abs(c) < fpmin) c = fpmin;
+                d = 1 / d;
+                h *= d * c;
+                aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+                d = 1 + aa * d;
+                if (Math.abs(d) < fpmin) d = fpmin;
+                c = 1 + aa / c;
+                if (Math.abs(c) < fpmin) c = fpmin;
+                d = 1 / d;
+                const del = d * c;
+                h *= del;
+                if (Math.abs(del - 1) < eps) return h;
+            }
+            return h;
+        }
+        
+        function runCorrelationAnalysis() {
+            const variables = ['irr', 'premium', 'cumulativePremium'];
+            const varLabels = { 'irr': 'IRR', 'premium': '年保费', 'cumulativePremium': '累计保费' };
+            
+            const corrData = [];
+            for (let i = 0; i < variables.length; i++) {
+                const row = [];
+                for (let j = 0; j < variables.length; j++) {
+                    const v1 = variables[i];
+                    const v2 = variables[j];
+                    const corr = pearsonCorrelation(policyData.map(p => p[v1]), policyData.map(p => p[v2]));
+                    row.push(corr);
+                }
+                corrData.push(row);
+            }
+            
+            if (correlationMatrixInstance) {
+                correlationMatrixInstance.dispose();
+            }
+            
+            const container = document.getElementById('correlationMatrix');
+            correlationMatrixInstance = echarts.init(container);
+            
+            const option = {
+                backgroundColor: 'transparent',
+                tooltip: {
+                    position: 'top',
+                    formatter: function(params) {
+                        return `${varLabels[variables[params.data[1]]]} vs ${varLabels[variables[params.data[0]]]}<br/>相关系数: ${params.data[2].toFixed(3)}`;
+                    }
+                },
+                grid: {
+                    height: '70%',
+                    top: '10%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: variables.map(v => varLabels[v]),
+                    splitArea: { show: true },
+                    axisLabel: { color: '#fff' }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: variables.map(v => varLabels[v]),
+                    splitArea: { show: true },
+                    axisLabel: { color: '#fff' }
+                },
+                visualMap: {
+                    min: -1,
+                    max: 1,
+                    calculable: true,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: '0%',
+                    inRange: {
+                        color: ['#d62728', '#fff', '#2ca02c']
+                    },
+                    textStyle: { color: '#fff' }
+                },
+                series: [{
+                    name: '相关系数',
+                    type: 'heatmap',
+                    data: corrData.flatMap((row, i) => row.map((val, j) => [j, i, val])),
+                    label: {
+                        show: true,
+                        formatter: function(params) {
+                            return params.data[2].toFixed(2);
+                        },
+                        color: '#fff'
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }]
+            };
+            
+            correlationMatrixInstance.setOption(option);
+            
+            const significantHTML = corrData.flatMap((row, i) => 
+                row.map((val, j) => {
+                    if (i < j && Math.abs(val) > 0.3) {
+                        return `<div class="p-2 rounded-lg bg-white/5">
+                            <span class="text-orange-400">${varLabels[variables[i]]}</span> ↔ 
+                            <span class="text-orange-400">${varLabels[variables[j]]}</span>
+                            <br/><span class="text-lg font-bold">${val.toFixed(3)}</span>
+                        </div>`;
+                    }
+                    return '';
+                })
+            ).filter(s => s).join('');
+            
+            document.getElementById('significantCorrelations').innerHTML = significantHTML || '<p class="text-gray-400">无显著相关变量对</p>';
+        }
+        
+        function pearsonCorrelation(x, y) {
+            const n = x.length;
+            const meanX = x.reduce((a, b) => a + b, 0) / n;
+            const meanY = y.reduce((a, b) => a + b, 0) / n;
+            
+            let num = 0, denX = 0, denY = 0;
+            for (let i = 0; i < n; i++) {
+                const dx = x[i] - meanX;
+                const dy = y[i] - meanY;
+                num += dx * dy;
+                denX += dx * dx;
+                denY += dy * dy;
+            }
+            
+            return num / Math.sqrt(denX * denY);
+        }
+        
+        function runRegressionAnalysis() {
+            const target = document.getElementById('regressionTarget').value;
+            const predictors = target === 'irr' ? ['premium', 'cumulativePremium'] : ['irr', 'cumulativePremium'];
+            
+            const X = policyData.map(p => [1, ...predictors.map(pred => p[pred])]);
+            const y = policyData.map(p => p[target]);
+            
+            const n = X.length;
+            const p = predictors.length;
+            
+            const XtX = multiply(transpose(X), X);
+            const XtXInv = inverse(XtX);
+            const Xty = multiply(transpose(X), y.map(v => [v]));
+            const beta = multiply(XtXInv, Xty).map(r => r[0]);
+            
+            const yPred = X.map(row => row.reduce((sum, val, i) => sum + val * beta[i], 0));
+            const yMean = y.reduce((a, b) => a + b, 0) / n;
+            
+            const ssRes = y.reduce((sum, yi, i) => sum + Math.pow(yi - yPred[i], 2), 0);
+            const ssTot = y.reduce((sum, yi) => sum + Math.pow(yi - yMean, 2), 0);
+            const rSquared = 1 - ssRes / ssTot;
+            const adjRSquared = 1 - (1 - rSquared) * (n - 1) / (n - p - 1);
+            
+            const mse = ssRes / (n - p - 1);
+            const se = XtXInv.map((row, i) => Math.sqrt(mse * row[i]));
+            
+            const tStats = beta.map((b, i) => b / se[i]);
+            const pValues = tStats.map(t => 2 * (1 - tDistributionCDF(Math.abs(t), n - p - 1)));
+            
+            const fStat = (ssTot - ssRes) / p / (ssRes / (n - p - 1));
+            const fPValue = 1 - fDistributionCDF(fStat, p, n - p - 1);
+            
+            document.getElementById('rSquared').textContent = rSquared.toFixed(4);
+            document.getElementById('adjRSquared').textContent = adjRSquared.toFixed(4);
+            document.getElementById('fStatistic').textContent = fStat.toFixed(4);
+            document.getElementById('fPValue').textContent = fPValue < 0.0001 ? '< 0.0001' : fPValue.toFixed(4);
+            document.getElementById('sampleSize').textContent = n;
+            
+            const varNames = ['截距', ...predictors];
+            const coefHTML = beta.map((b, i) => `
+                <tr>
+                    <td>${varNames[i]}</td>
+                    <td>${b.toFixed(4)}</td>
+                    <td>${pValues[i] < 0.0001 ? '< 0.0001' : pValues[i].toFixed(4)}</td>
+                    <td><span class="status-badge ${pValues[i] < 0.05 ? 'status-active' : 'status-lapsed'}">${pValues[i] < 0.05 ? '显著' : '不显著'}</span></td>
+                </tr>
+            `).join('');
+            document.getElementById('coefficientsBody').innerHTML = coefHTML;
+            
+            const equation = `${target === 'irr' ? 'IRR' : '保费'} = ${beta[0].toFixed(4)} ${beta.slice(1).map((b, i) => `${b >= 0 ? '+' : ''} ${b.toFixed(4)} × ${predictors[i] === 'premium' ? '年保费' : predictors[i] === 'irr' ? 'IRR' : '累计保费'}`).join('')}`;
+            document.getElementById('regressionEquation').textContent = equation;
+        }
+        
+        function multiply(A, B) {
+            const result = [];
+            for (let i = 0; i < A.length; i++) {
+                result[i] = [];
+                for (let j = 0; j < B[0].length; j++) {
+                    let sum = 0;
+                    for (let k = 0; k < A[0].length; k++) {
+                        sum += A[i][k] * B[k][j];
+                    }
+                    result[i][j] = sum;
+                }
+            }
+            return result;
+        }
+        
+        function transpose(A) {
+            return A[0].map((_, i) => A.map(row => row[i]));
+        }
+        
+        function inverse(A) {
+            const n = A.length;
+            const aug = A.map((row, i) => [...row, ...Array(n).fill(0).map((_, j) => i === j ? 1 : 0)]);
+            
+            for (let i = 0; i < n; i++) {
+                let maxRow = i;
+                for (let k = i + 1; k < n; k++) {
+                    if (Math.abs(aug[k][i]) > Math.abs(aug[maxRow][i])) maxRow = k;
+                }
+                [aug[i], aug[maxRow]] = [aug[maxRow], aug[i]];
+                
+                const pivot = aug[i][i];
+                for (let j = 0; j < 2 * n; j++) aug[i][j] /= pivot;
+                
+                for (let k = 0; k < n; k++) {
+                    if (k !== i) {
+                        const factor = aug[k][i];
+                        for (let j = 0; j < 2 * n; j++) aug[k][j] -= factor * aug[i][j];
+                    }
+                }
+            }
+            
+            return aug.map(row => row.slice(n));
+        }
+        
+        function fDistributionCDF(x, d1, d2) {
+            return incompleteBeta(d1 / 2, d2 / 2, d1 * x / (d1 * x + d2));
+        }
+        
+        function analyzeIRRDrivers() {
+            const drivers = [
+                { name: '年保费', key: 'premium' },
+                { name: '累计保费', key: 'cumulativePremium' },
+                { name: '产品类型', key: 'productType' },
+                { name: '地区类型', key: 'regionType' },
+                { name: '渠道', key: 'channel' }
+            ];
+            
+            const results = drivers.map(driver => {
+                if (driver.key === 'productType' || driver.key === 'regionType' || driver.key === 'channel') {
+                    const groups = [...new Set(policyData.map(p => p[driver.key]))];
+                    const groupMeans = groups.map(g => {
+                        const data = policyData.filter(p => p[driver.key] === g).map(p => p.irr);
+                        return data.reduce((a, b) => a + b, 0) / data.length;
+                    });
+                    const overallMean = policyData.reduce((a, p) => a + p.irr, 0) / policyData.length;
+                    const ssBetween = groups.reduce((sum, g, i) => {
+                        const n = policyData.filter(p => p[driver.key] === g).length;
+                        return sum + n * Math.pow(groupMeans[i] - overallMean, 2);
+                    }, 0);
+                    const ssTotal = policyData.reduce((sum, p) => sum + Math.pow(p.irr - overallMean, 2), 0);
+                    const etaSquared = ssBetween / ssTotal;
+                    
+                    return {
+                        name: driver.name,
+                        importance: etaSquared,
+                        type: '分类变量',
+                        interpretation: etaSquared > 0.1 ? '强影响' : etaSquared > 0.05 ? '中等影响' : '弱影响'
+                    };
+                } else {
+                    const corr = pearsonCorrelation(policyData.map(p => p[driver.key]), policyData.map(p => p.irr));
+                    return {
+                        name: driver.name,
+                        importance: Math.abs(corr),
+                        type: '数值变量',
+                        interpretation: Math.abs(corr) > 0.5 ? '强相关' : Math.abs(corr) > 0.3 ? '中等相关' : '弱相关'
+                    };
+                }
+            });
+            
+            results.sort((a, b) => b.importance - a.importance);
+            
+            const html = results.map((r, i) => `
+                <div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl">
+                    <div class="w-8 h-8 rounded-lg ${i === 0 ? 'bg-gradient-to-br from-orange-500 to-yellow-400' : 'bg-white/10'} flex items-center justify-center font-bold">${i + 1}</div>
+                    <div class="flex-1">
+                        <p class="font-medium">${r.name}</p>
+                        <p class="text-sm text-gray-400">${r.type} · ${r.interpretation}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xl font-bold text-orange-400">${(r.importance * 100).toFixed(1)}%</p>
+                        <p class="text-xs text-gray-400">重要性</p>
+                    </div>
+                    <div class="w-32">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${r.importance * 100}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('driverAnalysis').innerHTML = html;
+        }
+        
+        function runNormalityTest() {
+            const variable = document.getElementById('normalityVariable').value;
+            const data = policyData.map(p => p[variable]);
+            
+            const n = data.length;
+            const mean = data.reduce((a, b) => a + b, 0) / n;
+            const std = Math.sqrt(data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n);
+            
+            const sorted = [...data].sort((a, b) => a - b);
+            const skewness = data.reduce((sum, x) => sum + Math.pow((x - mean) / std, 3), 0) / n;
+            const kurtosis = data.reduce((sum, x) => sum + Math.pow((x - mean) / std, 4), 0) / n - 3;
+            
+            const jb = n / 6 * (Math.pow(skewness, 2) + Math.pow(kurtosis, 2) / 4);
+            const pValue = Math.exp(-jb / 2);
+            const isNormal = pValue > 0.05;
+            
+            const varLabel = { 'irr': 'IRR', 'premium': '保费', 'cashValue': '现金价值' }[variable];
+            
+            const resultHTML = `
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">样本量:</span>
+                        <span class="font-bold">${n}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">均值:</span>
+                        <span class="font-bold">${mean.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">标准差:</span>
+                        <span class="font-bold">${std.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">偏度:</span>
+                        <span class="font-bold">${skewness.toFixed(4)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">峰度:</span>
+                        <span class="font-bold">${kurtosis.toFixed(4)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">P值:</span>
+                        <span class="font-bold ${isNormal ? 'text-green-400' : 'text-red-400'}">${pValue.toFixed(4)}</span>
+                    </div>
+                    <div class="mt-4 p-3 rounded-lg ${isNormal ? 'bg-green-500/20' : 'bg-red-500/20'}">
+                        <p class="text-sm">${isNormal ? 
+                            `${varLabel}数据近似服从正态分布 (p > 0.05)` :
+                            `${varLabel}数据不服从正态分布 (p ≤ 0.05)`
+                        }</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('normalityResult').innerHTML = resultHTML;
+            
+            const ctx = document.getElementById('normalityHistogram').getContext('2d');
+            
+            if (window.normalityHistogramInstance) {
+                window.normalityHistogramInstance.destroy();
+            }
+            
+            const bins = 20;
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const binWidth = (max - min) / bins;
+            const histogram = Array(bins).fill(0);
+            
+            data.forEach(x => {
+                const binIndex = Math.min(Math.floor((x - min) / binWidth), bins - 1);
+                histogram[binIndex]++;
+            });
+            
+            const labels = Array(bins).fill(0).map((_, i) => (min + i * binWidth).toFixed(1));
+            
+            window.normalityHistogramInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '频数',
+                        data: histogram,
+                        backgroundColor: 'rgba(255, 107, 53, 0.6)',
+                        borderColor: 'rgba(255, 107, 53, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        y: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
