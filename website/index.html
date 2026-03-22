@@ -808,8 +808,8 @@
                         <div class="flex items-center justify-between mt-6">
                             <p class="text-sm text-gray-400">显示 1-20 条，共 96 条</p>
                             <div class="flex gap-2">
-                                <button class="btn-secondary text-sm py-2 px-4">上一页</button>
-                                <button class="btn-secondary text-sm py-2 px-4">下一页</button>
+                                <button class="btn-secondary text-sm py-2 px-4" onclick="prevPage()">上一页</button>
+                                <button class="btn-secondary text-sm py-2 px-4" onclick="nextPage()">下一页</button>
                             </div>
                         </div>
                     </div>
@@ -1384,6 +1384,12 @@
             container.innerHTML = html;
         }
         
+        // 分页相关变量
+        let currentPage = 1;
+        const itemsPerPage = 20;
+        const totalItems = 96;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
         // 生成数据表格
         function generateDataTable() {
             const tbody = document.getElementById('policyTableBody');
@@ -1392,7 +1398,10 @@
             const products = ['平安福', '平安金裕人生', '平安智胜人生', '平安世纪理财', '平安颐享年金', '平安御享金瑞', '平安智悦人生', '平安聚财宝'];
             let html = '';
             
-            for (let i = 1; i <= 20; i++) {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+            
+            for (let i = startIndex + 1; i <= endIndex; i++) {
                 const policyNum = 'PA' + (2018000000 + i);
                 const product = products[Math.floor(Math.random() * products.length)];
                 const premium = Math.floor(Math.random() * 100000 + 20000);
@@ -1413,6 +1422,37 @@
             }
             
             tbody.innerHTML = html;
+            
+            // 更新分页信息
+            updatePaginationInfo();
+        }
+        
+        // 更新分页信息
+        function updatePaginationInfo() {
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+            const infoText = `显示 ${startItem}-${endItem} 条，共 ${totalItems} 条`;
+            
+            const infoElement = document.querySelector('.flex.items-center.justify-between.mt-6 p');
+            if (infoElement) {
+                infoElement.textContent = infoText;
+            }
+        }
+        
+        // 上一页
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                generateDataTable();
+            }
+        }
+        
+        // 下一页
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                generateDataTable();
+            }
         }
         
         // 导出报告
