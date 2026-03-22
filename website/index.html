@@ -224,12 +224,12 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-orange-100 text-sm">平均收益率</p>
-                            <p class="text-3xl font-bold">3.85%</p>
+                            <p class="text-3xl font-bold">3.82%</p>
                         </div>
                         <i class="fas fa-chart-line text-3xl text-orange-200"></i>
                     </div>
                     <div class="mt-4 text-orange-100 text-sm">
-                        <span class="bg-orange-400 bg-opacity-30 px-2 py-1 rounded">+0.15%</span>
+                        <span class="bg-orange-400 bg-opacity-30 px-2 py-1 rounded">+0.18%</span>
                         较上月
                     </div>
                 </div>
@@ -575,7 +575,7 @@
                         labels: ['0-2%', '2-3%', '3-4%', '4-5%', '5%+'],
                         datasets: [{
                             label: '保单数量',
-                            data: [50, 200, 500, 300, 100],
+                            data: [0, 0, 20, 0, 0],
                             backgroundColor: ['#FF6B35', '#FF8C42', '#FFB627', '#FFD93D', '#FFE066']
                         }]
                     },
@@ -596,7 +596,7 @@
                     data: {
                         labels: ['低风险', '中风险', '高风险'],
                         datasets: [{
-                            data: [65, 25, 10],
+                            data: [100, 0, 0],
                             backgroundColor: ['#4CAF50', '#FFB627', '#FF6B35']
                         }]
                     },
@@ -620,20 +620,20 @@
                         datasets: [
                             {
                                 label: '预测收益',
-                                data: [4.1, 4.2, 4.3, 4.5, 4.7],
+                                data: [3.8, 3.9, 4.0, 4.1, 4.2],
                                 borderColor: '#FF6B35',
                                 backgroundColor: 'rgba(255, 107, 53, 0.1)'
                             },
                             {
                                 label: '置信区间上限',
-                                data: [4.3, 4.4, 4.5, 4.7, 4.9],
+                                data: [4.0, 4.1, 4.2, 4.3, 4.4],
                                 borderColor: '#FFB627',
                                 borderDash: [5, 5],
                                 fill: false
                             },
                             {
                                 label: '置信区间下限',
-                                data: [3.9, 4.0, 4.1, 4.3, 4.5],
+                                data: [3.6, 3.7, 3.8, 3.9, 4.0],
                                 borderColor: '#FFB627',
                                 borderDash: [5, 5],
                                 fill: false
@@ -658,7 +658,7 @@
                         labels: ['低风险', '中风险', '高风险', '极高风险'],
                         datasets: [{
                             label: '预测风险比例',
-                            data: [60, 25, 10, 5],
+                            data: [100, 0, 0, 0],
                             backgroundColor: ['#4CAF50', '#FFB627', '#FF8C42', '#FF6B35']
                         }]
                     },
