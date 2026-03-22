@@ -6,7 +6,7 @@
 
 ## 项目简介
 
-平安寿险收益分析器是一个专业的保险数据分析工具，用于计算和分析平安寿险各类险种的保单收益情况。该工具支持传统寿险、分红险、万能险、投连险等多种险种的收益计算，并提供可视化报告和交互式仪表盘。
+平安寿险收益分析器是一个专业的保险数据分析工具，用于计算和分析平安寿险各类险种的保单收益情况。该工具支持传统寿险、分红险、万能险、投连险等多种险种的收益计算，并提供可视化报告和交互式Web仪表盘。
 
 ## 核心功能
 
@@ -26,10 +26,24 @@
 - 趋势分析与同比/环比对比
 - 基准对比 (演示利率、结算利率、行业平均)
 
-### 4. 可视化与报告
+### 4. 数据质量验证
+- 完整性检查（缺失值检测）
+- 一致性检查（数据逻辑验证）
+- 准确性检查（异常值检测）
+- 业务规则验证
+- 数据质量评分报告
+
+### 5. 统计分析
+- **假设检验**: t检验、ANOVA方差分析
+- **相关性分析**: Pearson、Spearman相关系数
+- **回归分析**: 线性回归、多元回归
+- **正态性检验**: Jarque-Bera检验
+- **驱动因素分析**: IRR关键影响因素识别
+
+### 6. 可视化与报告
 - 趋势折线图、分布箱线图、热力图
 - Excel、PDF、HTML多格式报告
-- Streamlit交互式仪表盘
+- 交互式Web仪表盘
 
 ## 项目结构
 
@@ -54,14 +68,22 @@ PingAn_Life_Returns_Analyzer/
 │   │   ├── irr_calculator.py
 │   │   ├── returns_calculator.py
 │   │   └── policy_calculator.py
-│   ├── analyze/             # 统计分析
+│   ├── analyze/             # 数据分析
 │   │   ├── aggregator.py
 │   │   ├── trend_analyzer.py
 │   │   └── benchmark_analyzer.py
+│   ├── validation/          # 数据验证模块
+│   │   ├── data_validator.py
+│   │   └── quality_reporter.py
+│   ├── statistics/          # 统计分析模块
+│   │   ├── hypothesis_tester.py
+│   │   ├── correlation_analyzer.py
+│   │   └── regression_analyzer.py
 │   └── visualize/           # 可视化与报告
 │       ├── chart_generator.py
-│       ├── report_generator.py
-│       └── dashboard.py
+│       └── report_generator.py
+├── website/                 # Web仪表盘
+│   └── index.html           # 交互式分析页面
 ├── notebooks/               # Jupyter笔记本
 ├── reports/                 # 输出报告
 │   └── charts/              # 图表文件
@@ -83,7 +105,7 @@ PingAn_Life_Returns_Analyzer/
 
 1. 克隆项目
 ```bash
-git clone <repository-url>
+git clone https://github.com/GodBlessM1/PingAn-Insurance.git
 cd PingAn_Life_Returns_Analyzer
 ```
 
@@ -130,6 +152,12 @@ python main.py --mode calculate
 # 仅数据分析
 python main.py --mode analyze
 
+# 仅数据质量验证
+python main.py --mode validate
+
+# 仅统计分析
+python main.py --mode statistics
+
 # 仅生成可视化
 python main.py --mode visualize
 
@@ -137,11 +165,59 @@ python main.py --mode visualize
 python main.py --mode reports
 ```
 
-### 启动交互式仪表盘
+### 启动Web仪表盘
 
 ```bash
-streamlit run dashboard_app.py
+cd website
+python -m http.server 8888
 ```
+
+然后在浏览器中访问 `http://localhost:8888`
+
+## Web仪表盘功能
+
+### 数据仪表板
+- 总览统计卡片（保单数、平均IRR、总保费、活跃保单）
+- 产品IRR分布对比
+- 渠道保费分布
+- 年龄分布分析
+
+### 趋势分析
+- 年度IRR趋势图
+- 保费趋势分析
+- 产品类别趋势对比
+
+### 分布分析
+- IRR分布直方图
+- 保费分布分析
+- 产品类型分布饼图
+
+### 产品对比
+- 多产品IRR对比表
+- 关键指标对比
+- 产品性能排名
+
+### 热力图分析
+- 产品×地区交叉分析
+- 渠道×年龄热力图
+- 多维度数据透视
+
+### 交叉分析
+- 自定义维度组合分析
+- 多指标切换
+- 详细数据表格
+
+### 地图分析
+- 全国保单分布地图
+- 地区排名TOP 10
+- 地区数据明细表
+
+### 统计分析
+- **假设检验**: IRR差异检验、保费差异检验、地区差异检验
+- **相关性分析**: 相关系数矩阵热力图
+- **回归分析**: 线性回归模型、系数显著性检验
+- **IRR驱动因素**: 关键影响因素排序
+- **正态性检验**: 分布直方图、偏度峰度分析
 
 ## 核心指标说明
 
@@ -243,13 +319,29 @@ def _calculate_new_type_returns(self, policy_data, cashflow_data):
     pass
 ```
 
-### 添加新的可视化图表
+### 添加新的统计分析方法
 
-在 `src/visualize/chart_generator.py` 中添加新的图表方法：
+在 `src/statistics/` 目录下扩展：
 
 ```python
-def plot_new_chart(self, df, ...):
-    # 实现新的图表
+# hypothesis_tester.py - 添加新的假设检验方法
+def anova_test(self, df, value_col, group_col):
+    # 实现ANOVA检验
+    pass
+
+# correlation_analyzer.py - 添加新的相关性分析方法
+def partial_correlation(self, df, col1, col2, control_cols):
+    # 实现偏相关分析
+    pass
+```
+
+### 添加新的数据验证规则
+
+在 `src/validation/data_validator.py` 中添加：
+
+```python
+def _check_custom_rule(self, df, rule_name):
+    # 实现自定义验证规则
     pass
 ```
 
@@ -275,16 +367,23 @@ pytest tests/
 ## 联系方式
 
 - 项目维护: 平安寿险数据分析团队
-- 邮箱: <team-email@pingan.com.cn>
+- GitHub: https://github.com/GodBlessM1/PingAn-Insurance
 
 ## 更新日志
+
+### v1.1.0 (2025-03-23)
+- 新增数据验证模块 (DataValidator, QualityReporter)
+- 新增统计分析模块 (HypothesisTester, CorrelationAnalyzer, RegressionAnalyzer)
+- 新增Web交互式仪表盘
+- 新增统计分析页面（假设检验、相关性分析、回归分析、正态性检验）
+- 优化网站布局，提升用户体验
+- 删除未使用的模块 (ml, utils, risk_analyzer, interactive_charts)
 
 ### v1.0.0 (2024-XX-XX)
 - 初始版本发布
 - 支持传统寿险、分红险、万能险、投连险收益计算
 - 提供趋势分析、对比分析、基准对比功能
 - 支持Excel、PDF、HTML报告生成
-- 提供Streamlit交互式仪表盘
 
 ---
 
